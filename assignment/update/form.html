@@ -1,0 +1,130 @@
+
+<!DOCTYPE html>
+<html>
+<body>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+<script>
+      $(document).ready(function(){
+
+        var counter =0;
+          $.ajax({
+        
+            type: "GET",
+        
+            url: "../country.xml",
+        
+            dataType: "xml",
+        
+            success: function(xml){
+        
+                $(xml).find('CcyNtry').each(function(i, item) {
+                var code = $(this).find('Ccy').text();
+                 
+                $('#currency_ops').append($('<option>', { 
+
+                    
+                    value: code,
+                    text : code,
+                    id: "currency",counter 
+                    
+                }));
+                counter++;
+            });
+
+          },
+        
+          error: function() {
+        
+            alert("An error occurred while processing XML file.");
+        
+          }
+    
+          });
+        
+        });
+          
+</script>
+  
+<form action="index.php" method="GET">
+    <h1>Form interface for POST,PUT,DELETE</h1>
+    <hr>
+    <br>
+    <select id ="currency_ops">
+    </select>
+    <br>
+    Post: <input type="Radio" name="action" Value="post"></input>
+    Put: <input type="Radio" name="action" Value="put"></input>
+    Delete: <input type="Radio" name="action" Value="del"></input>
+    <br>
+    <button id="sButton" type="button" style="background-color:blue;border-color: blue;color:white;font-weight:bold;">Submit</button>
+    <br>
+    <h4>Response XML</h4><br>
+    <textarea id="textArea" rows="20" cols="100">
+    </textarea><br>
+    
+</form>
+<script>
+$(function() {
+
+  var selectedAction ="";
+  var selectedCurrency =""
+  // bind change event to select
+  $('#currency_ops').on('change', function() {
+    var url = $(this).val(); // get selected value
+    if (url) { // require a URL
+      //window.location = url; // redirect
+      selectedCurrency = url;
+    }
+    return false;
+  });
+
+  $('#sButton').click(function() {
+    $("#textArea").html(' ');  
+    $('input:radio').each(function() {
+      if($(this).is(':checked')) {
+        // You have a checked radio button here...
+        selectedAction = this.value;
+      } 
+      else {
+        // Or an unchecked one here...
+      }
+    });
+
+   //var url = window.location =  window.location + selectedOption;
+   //var savedUrl = window.location = 'http://localhost/atwd1/assignment/update/?cur='+ selectedCurrency+'&action='+selectedAction;
+   var savedUrl = 'http://localhost/atwd1/assignment/update/?cur='+ selectedCurrency+'&action='+selectedAction;
+   //window.location = "/?"+selectedOption;
+
+  //var url = window.location.href;
+ // console.log(url);
+ $(function(){
+   
+
+$.ajax({
+     type: "GET",
+     url: savedUrl,
+     dataType: "xml",
+     async: false,
+     contentType: "text/xml; charset=\"utf-8\"",
+     complete: function(xmlResponse) {
+
+            // So you can see what was wrong...
+           // console.log(xmlResponse);
+            //console.log(xmlResponse.responseText);
+         
+          $("#textArea").text(xmlResponse.responseText);
+     }
+});
+
+});
+
+});
+
+
+});
+</script>
+</body>
+</html>
+
+
+
