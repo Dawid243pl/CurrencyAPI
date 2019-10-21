@@ -1,17 +1,32 @@
 <?php
-
+    //error_reporting(0);
     $cur = htmlspecialchars($_GET["cur"]);
     
     $action = htmlspecialchars($_GET["action"]);
 
+
+
     date_default_timezone_set("Europe/London");
-
-
 
     $date = time();
     $filename ="../rateV1.xml";
     //echo $action."<br>".$cur;
     //de activate the current rate do not delete ie add an attribute        
+
+
+
+    $checkCurrency = simplexml_load_file("../country.xml");
+    
+
+    $checkCurr = $checkCurrency->xpath("//CcyNtry[Ccy='" . $cur . "']");
+
+    if (empty($checkCurr)){
+
+        echo "Error 2100 Currency code in wrong format or is missing";
+        die();
+    }
+
+
     if ($action == "del"){
 
         $dom = new DomDocument();
@@ -350,6 +365,9 @@
     print $doc->saveXML();
 
 
+    }else{
+        echo "Error 2000 Action not recognised or is missing";
+        die();
     }
 
 

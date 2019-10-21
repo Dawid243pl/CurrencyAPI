@@ -12,7 +12,35 @@ function is_decimal( $val )
 }
 
 
-//echo $_SERVER['QUERY_STRING'];
+$keyArray= array();
+foreach($_GET as $key=>$value){
+ 
+    array_push($keyArray,$key);
+
+}
+
+for($z =0;$z<sizeof($keyArray);$z++){
+
+
+    if ($keyArray[$z] == "from"){
+
+
+    }else if ($keyArray[$z] == "to"){
+
+
+    }else if ($keyArray[$z] == "amnt"){
+
+
+    }else if ($keyArray[$z] == "format"){
+
+
+    }else {
+        echo "ERROR 1100 Unrecognised parameter";
+        die();
+    }     
+
+
+}
 
 if ( (isset($_GET['from'])) && (isset($_GET['to'])) && (isset($_GET['amnt'])) && (isset($_GET['format']))  )  {
         
@@ -333,6 +361,7 @@ $loadNewFile = simplexml_load_string($test);
 if (!is_decimal($amnt) ){
 
     echo "Currency must be a decimal number error 1300";
+    exit();
 }
 else {
  
@@ -353,6 +382,7 @@ else {
     
     else{
         echo "Error 1400 Format must be XML OR JSON";
+        exit();
 
     }
     
@@ -361,6 +391,7 @@ else {
 
     }else{
         echo "Error Currency type not recognised 1200";
+        exit();
     }
 
 
