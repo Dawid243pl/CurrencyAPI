@@ -6,7 +6,9 @@
 <script>
       $(document).ready(function(){
 
+        var tempArray =[];
         var counter =0;
+        var isBlank = false;
           $.ajax({
         
             type: "GET",
@@ -19,15 +21,27 @@
         
                 $(xml).find('CcyNtry').each(function(i, item) {
                 var code = $(this).find('Ccy').text();
-                 
-                $('#currency_ops').append($('<option>', { 
+                
+                var checkCode = tempArray.includes(code);
+                if (code ==""){
+                  isBlank = true; 
+                }else{
+                  isBlank = false
+                }  
+                if((checkCode == true) || (isBlank == true)){
 
-                    
+                }else{
+                  tempArray.push(code);
+                  $('#currency_ops').append($('<option>', { 
+
                     value: code,
                     text : code,
                     id: "currency",counter 
-                    
-                }));
+
+                  }));
+                }
+              
+             
                 counter++;
             });
 
@@ -49,12 +63,12 @@
     <h1>Form interface for POST,PUT,DELETE</h1>
     <hr>
     <br>
-    <select id ="currency_ops">
+    <select required id ="currency_ops">
     </select>
     <br>
-    Post: <input type="Radio" name="action" Value="post"></input>
-    Put: <input type="Radio" name="action" Value="put"></input>
-    Delete: <input type="Radio" name="action" Value="del"></input>
+    Post: <input required type="Radio" name="action" Value="post"></input>
+    Put: <input required type="Radio" name="action" Value="put"></input>
+    Delete: <input required type="Radio" name="action" Value="del"></input>
     <br>
     <button id="sButton" type="button" style="background-color:blue;border-color: blue;color:white;font-weight:bold;">Submit</button>
     <br>
@@ -90,13 +104,8 @@ $(function() {
       }
     });
 
-   //var url = window.location =  window.location + selectedOption;
-   //var savedUrl = window.location = 'http://localhost/atwd1/assignment/update/?cur='+ selectedCurrency+'&action='+selectedAction;
    var savedUrl = 'http://localhost/atwd1/assignment/update/?cur='+ selectedCurrency+'&action='+selectedAction;
-   //window.location = "/?"+selectedOption;
-
-  //var url = window.location.href;
- // console.log(url);
+  
  $(function(){
    
 
@@ -107,10 +116,6 @@ $.ajax({
      async: false,
      contentType: "text/xml; charset=\"utf-8\"",
      complete: function(xmlResponse) {
-
-            // So you can see what was wrong...
-           // console.log(xmlResponse);
-            //console.log(xmlResponse.responseText);
          
           $("#textArea").text(xmlResponse.responseText);
      }

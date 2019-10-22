@@ -302,26 +302,39 @@
 
         $xml = simplexml_load_file("../rateV1.xml");
     
-
+        
+  
+        
         $obj = $xml->xpath("//currency[code='" . $cur . "']");
         
+        if (empty($obj)){
+
+            echo "Error 2200 Currency code not found for update";
+            die();
+        }
+    
+        $findRate = $xml->xpath("//currency[code='" . $cur . "']/rate");
+
+        if (empty($findRate)){
+
+            echo "Error 2300 No Rate listed fo this currency";
+            die();
+        }
+
+        $savedOldRate = (string) $obj[0]->rate;
 
         $obj[0]->rate = $newRate[1];
         $obj[0]->at = date('d F Y H:i',$date);
+
+        $rTo= (string) $obj[0]->time;
+        $rCode= (string) $obj[0]->code;
+        $rCurr= (string) $obj[0]->currencyName;
+        $rloc= (string) $obj[0]->location;
+        $rRate= (string) $obj[0]->rate;
+
         //echo $xml->asXml();
         $xml->asXml($filename);
     
-
-    $xml3=simplexml_load_file($filename);
-
-    $response=$xml3->xpath("//currency[code='" . $cur . "']");
-
-    $rTo= (string) $response[0]->time;
-    $rCode= (string) $response[0]->code;
-    $rCurr= (string) $response[0]->currencyName;
-    $rloc= (string) $response[0]->location;
-    $rRate= (string) $response[0]->rate;
-
     $doc = new DOMDocument('1.0', "UTF-8");
 
     $action = $doc->createElement('action');
@@ -340,7 +353,7 @@
     $newRate = $doc->createElement("rate",$newRate[1]);
     $action->appendChild($newRate);
     
-    $oldRate = $doc->createElement("old_rate",$obj[0]->rate);
+    $oldRate = $doc->createElement("old_rate",$savedOldRate);
     $action->appendChild($oldRate);
 
     $curren = $doc->createElement('curr'); 

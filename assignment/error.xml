@@ -1,0 +1,51 @@
+<?xml version="1.0"?>
+<conv>
+<error>
+<code>1000</code>
+<msg>Error Required parameter missing</msg>
+</error>
+<error>
+<code>1100</code>
+<msg>Parameter not recognised</msg>
+</error>
+<error>
+<code>1200</code>
+<msg>Currency type not recognised</msg>
+</error>
+<error>
+<code>1300</code>
+<msg>currency amount must be a decimal number</msg>
+</error>
+<error>
+<code>1400</code>
+<msg>Format must be XML OR JSON</msg>
+</error>
+<error>
+<code>1500</code>
+<msg>Error in service</msg>
+</error>
+<error>
+<code>2000</code>
+<msg>Action not recognised or is missing</msg>
+</error>
+<error>
+<code>2100</code>
+<msg>Currency code in wrong format or is missing</msg>
+</error>
+<error>
+<code>2200</code>
+<msg>Currency code not found for update</msg>
+</error>
+<error>
+<code>2300</code>
+<msg>No rate listed for this currency</msg>
+</error>
+<error>
+<code>2400</code>
+<msg>Cannot update base currency</msg>
+</error>
+<error>
+<code>2500</code>
+<msg>Error in service</msg>
+</error>
+</conv>

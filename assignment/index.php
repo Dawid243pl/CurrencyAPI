@@ -1,15 +1,8 @@
 <?php
 
-function is_decimal( $val )
-{
 
-    if(strpos($val,".") !== false){
-        
-        return true;
-    }else{
-        return false;
-    }
-}
+include 'functions.php';
+error_reporting(0);
 
 
 $keyArray= array();
@@ -18,61 +11,47 @@ foreach($_GET as $key=>$value){
     array_push($keyArray,$key);
 
 }
-
 for($z =0;$z<sizeof($keyArray);$z++){
 
 
     if ($keyArray[$z] == "from"){
-
+        $from = htmlspecialchars($_GET["from"]);
 
     }else if ($keyArray[$z] == "to"){
 
-
+        $to = htmlspecialchars($_GET["to"]);
     }else if ($keyArray[$z] == "amnt"){
 
-
+        $amnt = htmlspecialchars($_GET["amnt"]);
     }else if ($keyArray[$z] == "format"){
 
-
+        $format = htmlspecialchars($_GET["format"]);
     }else {
-        echo "ERROR 1100 Unrecognised parameter";
-        die();
+        displayErrorMessage("1100",$format);
+        exit();
     }     
-
 
 }
 
 if ( (isset($_GET['from'])) && (isset($_GET['to'])) && (isset($_GET['amnt'])) && (isset($_GET['format']))  )  {
         
-        $from = htmlspecialchars($_GET["from"]);
         
-        $to = htmlspecialchars($_GET["to"]);
-
-        $amnt = htmlspecialchars($_GET["amnt"]);
-
-        $format = htmlspecialchars($_GET["format"]);
-       
-
-
-
-
+    
 $xml_file_name ="rateV1.xml";
+
 
 date_default_timezone_set("Europe/London");
 
-
-//$date = date('d F Y H:i');
-
 $date = time();
-
-//echo $date."Time Now<br>";
-
-//echo date('m/d/Y', 1299446702);
-
 
 $countryFileXml=simplexml_load_file("country.xml");
 
 $rateFileXml=simplexml_load_file("rateV1.xml");
+
+if($rateFileXml===FALSE) {
+    displayErrorMessage("1500",$format);
+    exit();
+}
 
 $supported_rates =array();
 
@@ -97,8 +76,7 @@ if (in_array($from, $supported_rates))
   } 
 else
   { 
-    echo "error Parameter not recognised 1100"; 
-    exit();
+    $checkFrom = false;
   } 
 
   if (in_array($to, $supported_rates)) 
@@ -107,8 +85,7 @@ else
   } 
 else
   { 
-    echo "error Parameter not recognised 1100"; 
-    exit();
+    $checkTo = false;
   } 
 
 
@@ -119,9 +96,8 @@ if ( ($checkFrom == true) && ($checkTo == true) ){
 
 $currencyArray = array();
 
-$ratesFile=simplexml_load_file("rateV1.xml");
 
-$checkTime=$ratesFile->xpath('//currency[1]');
+$checkTime=$rateFileXml->xpath('//currency[1]');
 
 
     $dateStamp= (string) $checkTime[0]->time;
@@ -360,7 +336,8 @@ $loadNewFile = simplexml_load_string($test);
 
 if (!is_decimal($amnt) ){
 
-    echo "Currency must be a decimal number error 1300";
+    //echo "Currency must be a decimal number error 1300";
+    displayErrorMessage("1300",$format);
     exit();
 }
 else {
@@ -381,22 +358,20 @@ else {
     }
     
     else{
-        echo "Error 1400 Format must be XML OR JSON";
+        displayErrorMessage("1400",$format);
         exit();
-
     }
     
 }
 
-
     }else{
-        echo "Error Currency type not recognised 1200";
+        displayErrorMessage("1200",$format);
         exit();
     }
 
 
 }else{
-    echo "Error Required parameters missing 1000";
+    displayErrorMessage("1000",$format);
     exit();
 }
 
