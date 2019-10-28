@@ -1,8 +1,14 @@
 <?php
+    include '../functions.php';
+    //error_reporting(0);
+
+    $defaultFormat = "xml";
+    
     //error_reporting(0);
     $cur = htmlspecialchars($_GET["cur"]);
     
     $action = htmlspecialchars($_GET["action"]);
+
 
 
 
@@ -22,48 +28,16 @@
 
     if (empty($checkCurr)){
 
-        echo "Error 2100 Currency code in wrong format or is missing";
+        //echo "Error 2100 Currency code in wrong format or is missing";
+        displayErrorMessage("2100",$defaultFormat);
         die();
     }
 
 
     if ($action == "del"){
 
-        $dom = new DomDocument();
-        $dom->load('../rateV1.xml');
-        $xp = new DomXPath($dom);
-        $res = $xp->query("//currency[code='" . $cur . "']");
-       // print("<pre>".print_r($res->item(0) ,true)."</pre>");
-        $res->item(0)->setAttribute('display','none');
-        $dom->save('../rateV1.xml');
-
-
-        $doc = new DOMDocument('1.0', "UTF-8");
-
-        $action = $doc->createElement('action');
-    
-        $domAttribute = $doc->createAttribute('type');
-    
-        // Value for the created attribute
-        $domAttribute->value = "del";
-    
-        // Don't forget to append it to the element
-        $action->appendChild($domAttribute);
-    
-        $at = $doc->createElement("at", date('d F Y H:i',$date));
-        $action->appendChild($at);
-    
-        $newRate = $doc->createElement("curr",$cur);
-        $action->appendChild($newRate);
+        deleteRate($cur,$date,$action,$defaultFormat);
       
-    
-        $doc->appendChild($action);
-    
-        header('Content-Type: text/xml');
-        print $doc->saveXML();
-
-
-
     //put in a new rate 
     /*
     1 step open the country grab infrom from there
@@ -309,7 +283,7 @@
         
         if (empty($obj)){
 
-            echo "Error 2200 Currency code not found for update";
+            displayErrorMessage("2200",$defaultFormat);
             die();
         }
     
@@ -317,7 +291,7 @@
 
         if (empty($findRate)){
 
-            echo "Error 2300 No Rate listed fo this currency";
+            displayErrorMessage("2300",$defaultFormat);
             die();
         }
 
@@ -379,7 +353,7 @@
 
 
     }else{
-        echo "Error 2000 Action not recognised or is missing";
+        displayErrorMessage("2000",$defaultFormat);
         die();
     }
 
