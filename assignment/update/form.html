@@ -4,58 +4,7 @@
 <body>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
 <script>
-      $(document).ready(function(){
-
-        var tempArray =[];
-        var counter =0;
-        var isBlank = false;
-          $.ajax({
-        
-            type: "GET",
-        
-            url: "../country.xml",
-        
-            dataType: "xml",
-        
-            success: function(xml){
-        
-                $(xml).find('CcyNtry').each(function(i, item) {
-                var code = $(this).find('Ccy').text();
-                
-                var checkCode = tempArray.includes(code);
-                if (code ==""){
-                  isBlank = true; 
-                }else{
-                  isBlank = false
-                }  
-                if((checkCode == true) || (isBlank == true)){
-
-                }else{
-                  tempArray.push(code);
-                  $('#currency_ops').append($('<option>', { 
-
-                    value: code,
-                    text : code,
-                    id: "currency",counter 
-
-                  }));
-                }
-              
-             
-                counter++;
-            });
-
-          },
-        
-          error: function() {
-        
-            alert("An error occurred while processing XML file.");
-        
-          }
-    
-          });
-        
-        });
+     
           
 </script>
   
@@ -78,11 +27,62 @@
     
 </form>
 <script>
-$(function() {
+
+  $(document).ready(function(){
+
+var tempArray =[];
+var counter =0;
+var isBlank = false;
+  $.ajax({
+
+    type: "GET",
+
+    url: "../country.xml",
+
+    dataType: "xml",
+
+    success: function(xml){
+
+        $(xml).find('CcyNtry').each(function(i, item) {
+        var code = $(this).find('Ccy').text();
+        
+        var checkCode = tempArray.includes(code);
+        if (code ==""){
+          isBlank = true; 
+        }else{
+          isBlank = false
+        }  
+        if((checkCode == true) || (isBlank == true)){
+
+        }else{
+          tempArray.push(code);
+          $('#currency_ops').append($('<option>', { 
+
+            value: code,
+            text : code,
+            id: "currency",counter 
+
+          }));
+        }
+      
+     
+        counter++;
+    });
+
+  },
+
+  error: function() {
+
+    alert("An error occurred while processing XML file.");
+
+  }
+
+  });
 
   var selectedAction ="";
-  var selectedCurrency =""
-  // bind change event to select
+  var selectedCurrency ="AFN"
+
+ 
   $('#currency_ops').on('change', function() {
     var url = $(this).val(); // get selected value
     if (url) { // require a URL
@@ -93,6 +93,7 @@ $(function() {
   });
 
   $('#sButton').click(function() {
+    
     $("#textArea").html(' ');  
     $('input:radio').each(function() {
       if($(this).is(':checked')) {
@@ -106,22 +107,20 @@ $(function() {
 
    var savedUrl = 'http://localhost/atwd1/assignment/update/?cur='+ selectedCurrency+'&action='+selectedAction;
   
- $(function(){
-   
 
-$.ajax({
-     type: "GET",
-     url: savedUrl,
-     dataType: "xml",
-     async: false,
-     contentType: "text/xml; charset=\"utf-8\"",
-     complete: function(xmlResponse) {
-         
-          $("#textArea").text(xmlResponse.responseText);
-     }
-});
+    $.ajax({
+        type: "GET",
+        url: savedUrl,
+        dataType: "xml",
+        async: false,
+        contentType: "text/xml; charset=\"utf-8\"",
+        complete: function(xmlResponse) {
+            
+              $("#textArea").text(xmlResponse.responseText);
+        }
+    });
 
-});
+
 
 });
 

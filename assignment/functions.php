@@ -223,6 +223,10 @@ function compareToCountryXML($currencyArray,$countryFileXml,$date){
 
 function createRateFile($currencyArray,$xml_file_name){
        //create the rateV1File
+       date_default_timezone_set("Europe/London");
+
+       $date = time();
+
        $dom = new DOMDocument("1.0");
 
        $root = $dom->createElement('holder');
@@ -250,12 +254,70 @@ function createRateFile($currencyArray,$xml_file_name){
 
     //save as rates v1
     $test = $dom->saveXML();
-    $dom->save($xml_file_name);
+    if (file_exists($xml_file_name)) {
+        //echo "The file $xml_file_name exists";
+        $newFName = str_replace(".xml", "", $xml_file_name);
+
+        $renamed= rename($xml_file_name, $newFName."-".$date.".xml");
+        $dom->save($xml_file_name);
+    }else {
+        $dom->save($xml_file_name);
+    }
+
+
+ 
+
+     
+    //$dom->save($xml_file_name);
 
     return $test;
 
 }
 
+function getAPI2($newCurrencyArray,$cur){
+    $url = "http://data.fixer.io/api/latest?access_key=cbc73bcd8ffa149c344ba19ef687fa31";
+
+    $contents = file_get_contents($url);
+
+    $ratez=json_decode($contents);
+
+    $rate = $ratez->rates;
+
+    $gbp = $rate->GBP;
+
+    $newRate = array();
+
+    foreach ($rate as $key=> $item) {
+
+        if ($cur == $key){
+
+            array_push($newCurrencyArray,$item / $gbp);
+
+        }
+
+    } 
+    return $newCurrencyArray;    
+}
+
+function getCurrencyArray($cur,$currencyName,$date,$obj,$string){
+    $newCurrencyArray = array();
+
+        array_push($newCurrencyArray,$cur,$currencyName,date('d F Y H:i',$date));
+
+       
+        for ($n = 0;$n < sizeof($obj);$n++){
+
+            $location = $obj[$n]->CtryNm;
+
+            
+
+            $string = $string.$location.",";
+
+
+        }
+        array_push($newCurrencyArray,substr($string, 0, -1));
+        return $newCurrencyArray;    
+}
 function deleteRate($cur,$date,$action,$defaultFormat){
     $dom = new DomDocument();
     $dom->load('../rateV1.xml');
@@ -299,4 +361,179 @@ function deleteRate($cur,$date,$action,$defaultFormat){
     }
 }
 
+
+function addNewCurr($newCurrencyArray,$filename){
+      /// load XML, create XPath object
+      $xml2 = new DomDocument();
+      $xml2->preserveWhitespace = false;
+      $xml2->load($filename);
+      $xpath = new DOMXPath($xml2);
+
+      // get node mainNode, which we will append to
+      $mainNode = $xpath->query('//currency[last()]')->item(0);
+
+      // create node john
+      $newRate = $xml2->createElement('currency');
+
+
+      $code = $xml2->createElement('code', $newCurrencyArray[0]);
+      $newRate->appendChild($code);
+  
+      $rate = $xml2->createElement('rate', $newCurrencyArray[4]);
+      $newRate->appendChild($rate);
+
+      $currencyName = $xml2->createElement('currencyName', $newCurrencyArray[1]);
+      $newRate->appendChild($currencyName);
+      
+      $time = $xml2->createElement('time', $newCurrencyArray[2]);
+      $newRate->appendChild($time);
+
+      $location = $xml2->createElement('location', $newCurrencyArray[3]);
+      $newRate->appendChild($location);
+      
+
+      $mainNode->parentNode->insertBefore($newRate, $mainNode->nextSibling);
+
+
+      
+      // show result
+      //header('Content-Type: text/plain');
+      //print $xml2->saveXML();
+      $xml2->save($filename); // save as file
+}
+
+function displayFile($newCurrencyArray){
+    $doc = new DOMDocument('1.0', "UTF-8");
+
+    $action = $doc->createElement('action');
+
+    $domAttribute = $doc->createAttribute('type');
+
+    // Value for the created attribute
+    $domAttribute->value = "put";
+
+    // Don't forget to append it to the element
+    $action->appendChild($domAttribute);
+
+    $at = $doc->createElement("at",$newCurrencyArray[2]);
+    $action->appendChild($at);
+
+    $newRate = $doc->createElement("rate",$newCurrencyArray[4]);
+    $action->appendChild($newRate);
+    
+    $curren = $doc->createElement('curr'); 
+
+    $code = $doc->createElement("code",$newCurrencyArray[0]);
+    $curren->appendChild($code);
+    
+    $name = $doc->createElement("name",$newCurrencyArray[1]);
+    $curren->appendChild($name);
+
+    $loc = $doc->createElement("loc",$newCurrencyArray[3]);
+    $curren->appendChild($loc);
+
+    // Append it to the document itself
+    $action->appendChild($curren);
+
+    $doc->appendChild($action);
+
+    header('Content-Type: text/xml');
+    print $doc->saveXML();
+}
+
+
+function printPost($newRate,$date,$cur,$filename){
+    $xml = simplexml_load_file("../rateV1.xml");
+    
+    $obj = $xml->xpath("//currency[code='" . $cur . "']");
+    
+    if (empty($obj)){
+
+        displayErrorMessage("2200",$defaultFormat);
+        die();
+    }
+
+    $findRate = $xml->xpath("//currency[code='" . $cur . "']/rate");
+
+    if (empty($findRate)){
+
+        displayErrorMessage("2300",$defaultFormat);
+        die();
+    }
+
+    $savedOldRate = (string) $obj[0]->rate;
+
+    $obj[0]->rate = $newRate[1];
+    $obj[0]->at = date('d F Y H:i',$date);
+
+    $rTo= (string) $obj[0]->time;
+    $rCode= (string) $obj[0]->code;
+    $rCurr= (string) $obj[0]->currencyName;
+    $rloc= (string) $obj[0]->location;
+    $rRate= (string) $obj[0]->rate;
+
+    //echo $xml->asXml();
+    $xml->asXml($filename);
+
+    $doc = new DOMDocument('1.0', "UTF-8");
+
+    $action = $doc->createElement('action');
+
+    $domAttribute = $doc->createAttribute('type');
+
+    // Value for the created attribute
+    $domAttribute->value = "post";
+
+    // Don't forget to append it to the element
+    $action->appendChild($domAttribute);
+
+    $at = $doc->createElement("at",date('d F Y H:i',$date));
+    $action->appendChild($at);
+
+    $newRate = $doc->createElement("rate",$newRate[1]);
+    $action->appendChild($newRate);
+    
+    $oldRate = $doc->createElement("old_rate",$savedOldRate);
+    $action->appendChild($oldRate);
+
+    $curren = $doc->createElement('curr'); 
+
+    $code = $doc->createElement("code",$cur);
+    $curren->appendChild($code);
+    
+    $name = $doc->createElement("name",$rCurr);
+    $curren->appendChild($name);
+
+    $loc = $doc->createElement("loc",$rloc);
+    $curren->appendChild($loc);
+
+
+    // Append it to the document itself
+    $action->appendChild($curren);
+
+    $doc->appendChild($action);
+
+    //echo $doc->saveXML();
+    header('Content-Type: text/xml');
+    print $doc->saveXML();
+}
+function displayFormat($format,$test2){
+    if ($format == "xml"){
+            
+
+        header('Content-Type:text/xml');
+        echo $test2;
+
+    }
+    else if ($format == "json"){
+        $xml = simplexml_load_string($test2);
+        $json = json_encode($xml);
+        header ("Content-Type: application/json");
+        echo $json;
+    }
+    else{
+        displayErrorMessage("1400",$format);
+        exit();
+    }
+}
 ?>
