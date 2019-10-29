@@ -10,20 +10,20 @@
   
 <form action="index.php" method="GET">
     <h1>Form interface for POST,PUT,DELETE</h1>
-    <hr>
-    <br>
+    </hr>
+    </br>
     <select required id ="currency_ops">
     </select>
-    <br>
-    Post: <input required type="Radio" name="action" Value="post"></input>
-    Put: <input required type="Radio" name="action" Value="put"></input>
-    Delete: <input required type="Radio" name="action" Value="del"></input>
-    <br>
+    </br>
+    <div class ="outer" style="float:left;"><p style="float:left;margin:0px;">Post: </p><div class="circOutline" style="float:left;"><input class="requiredCircle" type="Radio" name="action" Value="post"></input></div></div>
+    <div class ="outer" style="float:left;"><p style="float:left;margin:0px;">Put:</p> <div class="circOutline"  style="float:left;"><input class="requiredCircle" type="Radio" name="action" Value="put"></input></div></div>
+    <div class ="outer" style="float:left;"><p style="float:left;margin:0px;">Delete:</p> <div class="circOutline"  style="float:left;"><input class="requiredCircle" type="Radio" name="action" Value="del"></input></div></div>
+    </br>
+    </br>
     <button id="sButton" type="button" style="background-color:blue;border-color: blue;color:white;font-weight:bold;">Submit</button>
-    <br>
-    <h4>Response XML</h4><br>
+    <h4>Response XML</h4></br>
     <textarea id="textArea" rows="20" cols="100">
-    </textarea><br>
+    </textarea>
     
 </form>
 <script>
@@ -93,6 +93,7 @@ var isBlank = false;
   });
 
   $('#sButton').click(function() {
+
     
     $("#textArea").html(' ');  
     $('input:radio').each(function() {
@@ -105,7 +106,13 @@ var isBlank = false;
       }
     });
 
-   var savedUrl = 'http://localhost/atwd1/assignment/update/?cur='+ selectedCurrency+'&action='+selectedAction;
+    if (selectedAction ==""){
+
+      alert("Please fill in the required fields");
+      $(".circOutline").css("border","1px solid red");
+    }else{
+      $(".circOutline").css("border","0px");
+      var savedUrl = 'http://localhost/atwd1/assignment/update/?cur='+ selectedCurrency+'&action='+selectedAction;
   
 
     $.ajax({
@@ -119,6 +126,8 @@ var isBlank = false;
               $("#textArea").text(xmlResponse.responseText);
         }
     });
+    }
+  
 
 
 
