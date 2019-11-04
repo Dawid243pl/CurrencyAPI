@@ -1,21 +1,15 @@
 <?php 
 
-//check if decimal
+
+//check if decimal entered
 function is_decimal( $val )
 {
-
-    if(strpos($val,".") !== false){
-        
-        return true;
-    }else{
-        return false;
-    }
+    return (!(is_numeric( $val ) || floor( $val ) != $val));
 }
 
-//parse error messages
+//deal with error messages
 function displayErrorMessage($errCd,$format)
 {
-
 
     if (strpos($_SERVER['REQUEST_URI'], "update") !== false){
 
@@ -80,11 +74,12 @@ function displayErrorMessage($errCd,$format)
 //getting the API
 function getAPI($supported_rates){
 
-$newArray =array();    
 $url = "http://data.fixer.io/api/latest?access_key=cbc73bcd8ffa149c344ba19ef687fa31";
 
-$contents = file_get_contents($url);
+$newArray =array();    
 
+$contents = file_get_contents($url);
+//apikey?
 $ratez=json_decode($contents);
 
 $rate = $ratez->rates;
@@ -119,19 +114,28 @@ return $newArray;
 
 //loading the rates file to display it
 function loadRateFile($rateFileXml,$to,$from,$amnt){
-    $toResponse=$rateFileXml->xpath("//currency[code='" . $to . "'][not(@display)]");
 
+    $getTime=$rateFileXml->xpath("/holder/@time");
 
-    $atTo= (string) $toResponse[0]->time;
+    $gotTime= (string) $getTime[0]->time;
+
+    $toResponse=$rateFileXml->xpath("//currency[code='" . $to . "']");
+
+    ///test/table/rows/row[not(@SubID = '1')]
+    //$result = $xml->xpath("//currency[code='" . $cur . "']/code/@display");
+    //*[title="50"]/..
+   
+
+    //$atTo= (string) $toResponse[0]->time;
     $codeTo= (string) $toResponse[0]->code;
     $currTo= (string) $toResponse[0]->currencyName;
     $locTo= (string) $toResponse[0]->location;
     $rateTo= (string) $toResponse[0]->rate;
 
-    $fromResponse=$rateFileXml->xpath("//currency[code='" . $from . "'][not(@display)]");
+    $fromResponse=$rateFileXml->xpath("//currency[code='" . $from . "']");
 
 
-    $atFrom= (string) $fromResponse[0]->time;
+    //$atFrom= (string) $fromResponse[0]->time;
     $codeFrom= (string) $fromResponse[0]->code;
     $currFrom= (string) $fromResponse[0]->currencyName;
     $locFrom= (string) $fromResponse[0]->location;
@@ -152,7 +156,7 @@ function loadRateFile($rateFileXml,$to,$from,$amnt){
 
     $mainNode = $dom2->createElement("conv");
 
-    $mainNode->appendChild($dom2->createElement("at",$atTo)); 
+    $mainNode->appendChild($dom2->createElement("at",$gotTime)); 
     $mainNode->appendChild($dom2->createElement("rate",$conversion));
 
     $fromElement = $dom2->createElement("from");
@@ -233,16 +237,23 @@ function createRateFile($currencyArray,$xml_file_name){
 
        $dom->appendChild($root);
 
+       $domAttribute = $dom->createAttribute('time');
 
+       // Value for the created attribute
+       $domAttribute->value = date('d F Y H:i',$date);
+
+       // Don't forget to append it to the element
+       $root->appendChild($domAttribute);
+       
        for ($z =0;$z < sizeof($currencyArray);$z++){
        
            $itemNode = $dom->createElement("currency");
-           
-
+            
+            
            $itemNode->appendChild($dom->createElement("code",$currencyArray[$z][0])); 
            $itemNode->appendChild($dom->createElement("rate",$currencyArray[$z][1]));
            $itemNode->appendChild($dom->createElement("currencyName",$currencyArray[$z][2]));
-           $itemNode->appendChild($dom->createElement("time",$currencyArray[$z][3]));
+           //$itemNode->appendChild($dom->createElement("time",$currencyArray[$z][3]));
            $itemNode->appendChild($dom->createElement("location",$currencyArray[$z][4]));
        
 
@@ -255,12 +266,16 @@ function createRateFile($currencyArray,$xml_file_name){
     //save as rates v1
     $test = $dom->saveXML();
     if (file_exists($xml_file_name)) {
-        //echo "The file $xml_file_name exists";
+        //echo "The file".$xml_file_name."exists</br>";
+
+
         $newFName = str_replace(".xml", "", $xml_file_name);
 
         $renamed= rename($xml_file_name, $newFName."-".$date.".xml");
+        //echo "Created new file called".$renamed;
         $dom->save($xml_file_name);
     }else {
+        //echo "The file".$xml_file_name."does not exists";
         $dom->save($xml_file_name);
     }
 
@@ -275,6 +290,7 @@ function createRateFile($currencyArray,$xml_file_name){
 }
 
 function getAPI2($newCurrencyArray,$cur){
+
     $url = "http://data.fixer.io/api/latest?access_key=cbc73bcd8ffa149c344ba19ef687fa31";
 
     $contents = file_get_contents($url);
@@ -322,11 +338,11 @@ function deleteRate($cur,$date,$action,$defaultFormat){
     $dom = new DomDocument();
     $dom->load('../rateV1.xml');
     $xp = new DomXPath($dom);
-    $res = $xp->query("//currency[code='" . $cur . "']");
+    $res = $xp->query("//currency[code='" . $cur . "']/code");
 
     
     if ($res->length>0){
-       // print("<pre>".print_r($res->item(0) ,true)."</pre>");
+       //print("<pre>".print_r($res->item(0) ,true)."</pre>");
         $res->item(0)->setAttribute('display','none');
         $dom->save('../rateV1.xml');
 
@@ -385,8 +401,8 @@ function addNewCurr($newCurrencyArray,$filename){
       $currencyName = $xml2->createElement('currencyName', $newCurrencyArray[1]);
       $newRate->appendChild($currencyName);
       
-      $time = $xml2->createElement('time', $newCurrencyArray[2]);
-      $newRate->appendChild($time);
+      //$time = $xml2->createElement('time', $newCurrencyArray[2]);
+      //$newRate->appendChild($time);
 
       $location = $xml2->createElement('location', $newCurrencyArray[3]);
       $newRate->appendChild($location);
@@ -443,6 +459,7 @@ function displayFile($newCurrencyArray){
 
 
 function printPost($newRate,$date,$cur,$filename){
+    
     $xml = simplexml_load_file("../rateV1.xml");
     
     $obj = $xml->xpath("//currency[code='" . $cur . "']");
@@ -460,13 +477,36 @@ function printPost($newRate,$date,$cur,$filename){
         displayErrorMessage("2300",$defaultFormat);
         die();
     }
+    
+    
+    $result = $xml->xpath("//currency[code='" . $cur . "']/code/@display");
+
+    //print_r($result);
+
+    if(!empty($result)){
+        
+        foreach ($result as $node) {
+            
+            unset($node[0]);
+        }
+    }
+
+//$toResponse=$rateFileXml->xpath("//currency[code='" . $to . "'][not(@display)]");
+/*
+$result = $xml->xpath("//currency[code='" . $cur . "']/code");
+print_r($result[0]->attributes);
+*/
+
+//echo($result["@attributes"]);
+   //levelone/myfield[@myatt='a']/@myval
+  
 
     $savedOldRate = (string) $obj[0]->rate;
-
+    
     $obj[0]->rate = $newRate[1];
     $obj[0]->at = date('d F Y H:i',$date);
 
-    $rTo= (string) $obj[0]->time;
+    //$rTo= (string) $obj[0]->time;
     $rCode= (string) $obj[0]->code;
     $rCurr= (string) $obj[0]->currencyName;
     $rloc= (string) $obj[0]->location;

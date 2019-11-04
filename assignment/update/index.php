@@ -1,6 +1,6 @@
 <?php
     include '../functions.php';
-    error_reporting(0);
+    //error_reporting(0);
 
     $defaultFormat = "xml";
     
@@ -71,11 +71,37 @@
         
         displayFile($newCurrencyArray);
 
-           
-            }else{
-                displayFile($newCurrencyArray);
+        
+        }else{
+            //then update it
+            //displayFile($newCurrencyArray);
+            $url = "http://data.fixer.io/api/latest?access_key=cbc73bcd8ffa149c344ba19ef687fa31";
 
-            }
+            $contents = file_get_contents($url);
+    
+            $ratez=json_decode($contents);
+    
+            $rate = $ratez->rates;
+    
+            $gbp = $rate->GBP;
+    
+            $newRate = array();
+    
+            foreach ($rate as $key=> $item) {
+    
+                if ($cur == $key){
+    
+                    array_push($newRate,$cur,$item / $gbp);
+    
+                }
+    
+            }     
+      
+            
+            printPost($newRate,$date,$cur,$filename);
+    
+           
+        }
                 
 
 
