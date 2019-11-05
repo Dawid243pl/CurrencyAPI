@@ -8,6 +8,7 @@ define("countryF","country.xml");
 
 define("ratesF","rateV1.xml");
 
+define("defaultFormat","xml");
 
 
 define("params", array(

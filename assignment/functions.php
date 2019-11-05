@@ -74,11 +74,11 @@ function displayErrorMessage($errCd,$format)
 //getting the API
 function getAPI($supported_rates){
 
-$url = "http://data.fixer.io/api/latest?access_key=cbc73bcd8ffa149c344ba19ef687fa31";
+
 
 $newArray =array();    
 
-$contents = file_get_contents($url);
+$contents = file_get_contents(apiKey);
 //apikey?
 $ratez=json_decode($contents);
 
@@ -121,12 +121,7 @@ function loadRateFile($rateFileXml,$to,$from,$amnt){
 
     $toResponse=$rateFileXml->xpath("//currency[code='" . $to . "']");
 
-    ///test/table/rows/row[not(@SubID = '1')]
-    //$result = $xml->xpath("//currency[code='" . $cur . "']/code/@display");
-    //*[title="50"]/..
-   
 
-    //$atTo= (string) $toResponse[0]->time;
     $codeTo= (string) $toResponse[0]->code;
     $currTo= (string) $toResponse[0]->currencyName;
     $locTo= (string) $toResponse[0]->location;
@@ -135,7 +130,6 @@ function loadRateFile($rateFileXml,$to,$from,$amnt){
     $fromResponse=$rateFileXml->xpath("//currency[code='" . $from . "']");
 
 
-    //$atFrom= (string) $fromResponse[0]->time;
     $codeFrom= (string) $fromResponse[0]->code;
     $currFrom= (string) $fromResponse[0]->currencyName;
     $locFrom= (string) $fromResponse[0]->location;
@@ -253,7 +247,6 @@ function createRateFile($currencyArray,$xml_file_name){
            $itemNode->appendChild($dom->createElement("code",$currencyArray[$z][0])); 
            $itemNode->appendChild($dom->createElement("rate",$currencyArray[$z][1]));
            $itemNode->appendChild($dom->createElement("currencyName",$currencyArray[$z][2]));
-           //$itemNode->appendChild($dom->createElement("time",$currencyArray[$z][3]));
            $itemNode->appendChild($dom->createElement("location",$currencyArray[$z][4]));
        
 
@@ -279,10 +272,6 @@ function createRateFile($currencyArray,$xml_file_name){
         $dom->save($xml_file_name);
     }
 
-
- 
-
-     
     //$dom->save($xml_file_name);
 
     return $test;
@@ -291,9 +280,9 @@ function createRateFile($currencyArray,$xml_file_name){
 
 function getAPI2($newCurrencyArray,$cur){
 
-    $url = "http://data.fixer.io/api/latest?access_key=cbc73bcd8ffa149c344ba19ef687fa31";
+    
 
-    $contents = file_get_contents($url);
+    $contents = file_get_contents(apiKey);
 
     $ratez=json_decode($contents);
 
@@ -334,6 +323,7 @@ function getCurrencyArray($cur,$currencyName,$date,$obj,$string){
         array_push($newCurrencyArray,substr($string, 0, -1));
         return $newCurrencyArray;    
 }
+
 function deleteRate($cur,$date,$action,$defaultFormat){
     $dom = new DomDocument();
     $dom->load('../rateV1.xml');

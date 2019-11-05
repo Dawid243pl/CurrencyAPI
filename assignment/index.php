@@ -2,57 +2,46 @@
 
 require('config.php');
 include 'functions.php';
+include 'functionsV2.php';
 //error_reporting(0);
 
 
-
-/*LIST TO DO
-
-1.Date only for one yes
-2.move the display none yes
-3.use config file
-4.improove functions
-5.make put update ? yes
-
-*/
-
-
-$keyArray = array();
+//check if each GET matches the parameters we want
 foreach ($_GET as $key => $value) {
+       
+if ( (($key == "from") && in_array($key, params)) ){
+    $from = htmlspecialchars($_GET["from"]);
+
+   
+}else if ( (($key == "to") && in_array($key, params)) ){
+    $to = htmlspecialchars($_GET["to"]);
     
-    array_push($keyArray, $key);
+
+}else if ( (($key == "amnt") && in_array($key, params)) ){
     
-}
-//check if the correct parametrs are in the url
-for ($z = 0; $z < sizeof($keyArray); $z++) {
+    $amnt = htmlspecialchars($_GET["amnt"]);
+
+
+}else if ( (($key == "format") && in_array($key, params)) ){
+    $format = htmlspecialchars($_GET["format"]);
     
-    
-    if ($keyArray[$z] == "from") {
-        $from = htmlspecialchars($_GET["from"]);
-        
-    } else if ($keyArray[$z] == "to") {
-        
-        $to = htmlspecialchars($_GET["to"]);
-    } else if ($keyArray[$z] == "amnt") {
-        
-        $amnt = htmlspecialchars($_GET["amnt"]);
-    } else if ($keyArray[$z] == "format") {
-        
-        $format = htmlspecialchars($_GET["format"]);
-    } else {
-        displayErrorMessage("1100", $format);
+//otherwise thorw error that paramter not recognised
+}else {
+    displayErrorMessage("1100", $format);
         exit();
-    }
-    
+
+}
+
 }
 
 
-//if get paramters are set
+//Check if the params we want are actually there otherwise thorw paramter missing
 if ((isset($_GET['from'])) && (isset($_GET['to'])) && (isset($_GET['amnt'])) && (isset($_GET['format']))) {
     
     
     $xml_file_name = "rateV1.xml";
     
+  
     date_default_timezone_set("Europe/London");
     
     $date = time();
@@ -63,64 +52,33 @@ if ((isset($_GET['from'])) && (isset($_GET['to'])) && (isset($_GET['amnt'])) && 
     
     $supported_rates = array();
     
-    //if file does not exist
-
+   
+    //check if the currency is a decimal
     if (is_decimal($amnt)) {
-                //echo "Currency must be a decimal number error 1300";
+        //echo "Currency must be a decimal number error 1300";
         displayErrorMessage("1300", $format);
         exit();
         
     }
 
+   
+    //check if rate file is there if it is load it otherwise create it
     if ($rateFileXml === FALSE) {
       
-        
-        $checkFrom = false;
-        $checkTo   = false;
-        
-        
-        
-        if (in_array($from, startingCurrencies)) {
-            $checkFrom = true;
-        } else {
-            $checkFrom = false;
-        }
-        
-        if (in_array($to, startingCurrencies)) {
-            $checkTo = true;
-        } else {
-            $checkTo = false;
-        }
-        
-        
-        if (($checkFrom == true) && ($checkTo == true)) {
+        //check if the currency we want to convert is in our currency list    
+        if ( (in_array($to, startingCurrencies)) && (in_array($from, startingCurrencies)) ) {
             
-            $currencyArray = array();
-              
-            $currencyArray = getAPI(startingCurrencies);
-            
-            $currencyArray = compareToCountryXML($currencyArray, $countryFileXml, $date);
-            
-            $test = createRateFile($currencyArray, $xml_file_name);
-            
-            $loadNewFile = simplexml_load_string($test);
-            
-            $test2 = loadRateFile($loadNewFile, $to, $from, $amnt);
-        
-           
-            displayFormat($format, $test2);
+            makeFile(startingCurrencies,$format,$to,$from,$amnt);
         } else {
             displayErrorMessage("1200", $format);
             exit();
         }
 
     } else {
+        //read file
+        //Make a new supporte rates array by getting all the currenices exluding the deleted currencies
         $getSupportedRates = $rateFileXml->xpath('//code[not(@display)]/ancestor::currency');
-        //$getSupportedRates = $rateFileXml->xpath('//currency[not(@display)]');
-        
-
-        //$supported_rates =array("AUD","BRL","CAD","CHF","CNY","DKK","EUR","GBP","HKD","HUF","INR","JPY","MXN","MYR","NOK","NZD","PHP","RUB","SEK","SGD","THB","TRY","USD","ZAR");
-        
+       
         //print("<pre>".print_r($getSupportedRates,true)."</pre>");
 
         foreach ($getSupportedRates as $supportedRate) {
@@ -130,25 +88,10 @@ if ((isset($_GET['from'])) && (isset($_GET['to'])) && (isset($_GET['amnt'])) && 
             array_push($supported_rates, $rateBack);
         }
 
-        $checkFrom = false;
-        $checkTo   = false;
+     
         
-        
-        
-        if (in_array($from, $supported_rates)) {
-            $checkFrom = true;
-        } else {
-            $checkFrom = false;
-        }
-        
-        if (in_array($to, $supported_rates)) {
-            $checkTo = true;
-        } else {
-            $checkTo = false;
-        }
-        
-        
-        if (($checkFrom == true) && ($checkTo == true)) {
+        if ( (in_array($to, $supported_rates)) && (in_array($from, $supported_rates)) ) {
+            
             
             $currencyArray = array();
             
@@ -159,29 +102,17 @@ if ((isset($_GET['from'])) && (isset($_GET['to'])) && (isset($_GET['amnt'])) && 
             $dateStamp = (string) $checkTime[0]->time;
             
             // if( strtotime($dateStamp) <= strtotime("-2 hours") ){
-            
+            //if time is bigger than 2 hours since last update grab new rates otherwise load old rates
             if (strtotime($dateStamp) <= strtotime("-2 hours")) {
                 
-                $currencyArray = getAPI($supported_rates);
-                
-                $currencyArray = compareToCountryXML($currencyArray, $countryFileXml, $date);
-                
-                $test = createRateFile($currencyArray, $xml_file_name);
-                
-                $loadNewFile = simplexml_load_string($test);
-                
-                $test2 = loadRateFile($loadNewFile, $to, $from, $amnt);
+                makeFile($supported_rates,$format,$to,$from,$amnt);
             } else {
                 
                 //load the file
                 $test2 = loadRateFile($rateFileXml, $to, $from, $amnt);
-            }
-            
-            
-            
-            /*!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!*/
-            
                 displayFormat($format, $test2);
+            }
+                            
             
         } else {
             displayErrorMessage("1200", $format);

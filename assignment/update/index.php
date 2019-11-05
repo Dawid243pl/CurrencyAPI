@@ -1,7 +1,9 @@
 <?php
     include '../functions.php';
+    include '../functionsV2.php';
     //error_reporting(0);
 
+    
     $defaultFormat = "xml";
     
     //error_reporting(0);
@@ -16,7 +18,7 @@
     //echo $action."<br>".$cur;
     //de activate the current rate do not delete ie add an attribute        
 
-    
+   
     $checkCurrency = simplexml_load_file("../country.xml");
     
     $checkCurr = $checkCurrency->xpath("//CcyNtry[Ccy='" . $cur . "']");
@@ -32,7 +34,8 @@
 
     if ($action == "del"){
 
-        deleteRate($cur,$date,$action,$defaultFormat);
+        //deleteRate($cur,$date,$action,$defaultFormat);
+        deleteCurrency ($cur,$action);
       
     //put in a new rate 
     /*
@@ -42,7 +45,7 @@
     */
     }else if ($action == "put"){
 
-
+        /*
         $xml = simplexml_load_file("../country.xml");
     
 
@@ -57,11 +60,16 @@
         $newCurrencyArray = getCurrencyArray($cur,$currencyName,$date,$obj,$string);
        
         $newCurrencyArray = getAPI2($newCurrencyArray,$cur,$date);
+
+        
   
         $xml = simplexml_load_file("../rateV1.xml");
     
 
         $obj = $xml->xpath("//currency[code='" . $cur . "']");
+
+
+
 
         //print("<pre>".print_r($obj,true)."</pre>");
         if (empty($obj)){
@@ -75,6 +83,7 @@
         }else{
             //then update it
             //displayFile($newCurrencyArray);
+            /*
             $url = "http://data.fixer.io/api/latest?access_key=cbc73bcd8ffa149c344ba19ef687fa31";
 
             $contents = file_get_contents($url);
@@ -99,15 +108,14 @@
       
             
             printPost($newRate,$date,$cur,$filename);
-    
+            */
+            //postCurrency($cur);
            
-        }
-                
-
-
+        //}
+        putCurrency ($cur);
     //update a current rate    
     }else if($action == "post") {
-        
+        /*
         $url = "http://data.fixer.io/api/latest?access_key=cbc73bcd8ffa149c344ba19ef687fa31";
 
         $contents = file_get_contents($url);
@@ -130,9 +138,9 @@
 
         }     
   
-        
         printPost($newRate,$date,$cur,$filename);
-
+*/
+        postCurrency($cur);
     }else{
         displayErrorMessage("2000",$defaultFormat);
         die();
