@@ -1,9 +1,9 @@
 <?php
 
 require('config.php');
-include 'functions.php';
+//include 'functions.php';
 include 'functionsV2.php';
-//error_reporting(0);
+error_reporting(0);
 
 
 //check if each GET matches the parameters we want
@@ -103,7 +103,7 @@ if ((isset($_GET['from'])) && (isset($_GET['to'])) && (isset($_GET['amnt'])) && 
             
             // if( strtotime($dateStamp) <= strtotime("-2 hours") ){
             //if time is bigger than 2 hours since last update grab new rates otherwise load old rates
-            if (strtotime($dateStamp) <= strtotime("-2 hours")) {
+            if ( strtotime($dateStamp) <= strtotime("-2 hours")) {
                 
                 makeFile($supported_rates,$format,$to,$from,$amnt);
             } else {

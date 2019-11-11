@@ -1,8 +1,19 @@
 <?php
-/* Config FILE */
+/* Config FILE
+
+CW1 Restful Currency Convertor
+!---------------------------------------!
+Module Code: UFCFX3-15-3
+Module Leader: Prakash Chatterjee
+Date: 21/11/2019 
+!---------------------------------------!
 
 
-define("apiKey","http://data.fixer.io/api/latest?access_key=cbc73bcd8ffa149c344ba19ef687fa31");
+By Dawid Koleczko 17024154
+*/
+
+
+define("apiKey","'http://data.fixer.io/api/latest?access_key=cbc73bcd8ffa149c344ba19ef687fa31'");
 
 define("countryF","country.xml");
 

@@ -1,5 +1,6 @@
 <?php
-    include '../functions.php';
+    //include '../functions.php';
+    require('../config.php');
     include '../functionsV2.php';
     //error_reporting(0);
 
@@ -34,112 +35,16 @@
 
     if ($action == "del"){
 
-        //deleteRate($cur,$date,$action,$defaultFormat);
+   
         deleteCurrency ($cur,$action);
-      
-    //put in a new rate 
-    /*
-    1 step open the country grab infrom from there
-    2 step past the infro to rate v1
-    3 step update this info?
-    */
+
+    //add new rate or update current
     }else if ($action == "put"){
 
-        /*
-        $xml = simplexml_load_file("../country.xml");
-    
-
-        $obj = $xml->xpath("//CcyNtry[Ccy='" . $cur . "']");
-
-        //print("<pre>".print_r($obj,true)."</pre>");
-
-        $string="";
-
-        $currencyName = (string)  $obj[0]->CcyNm;
-
-        $newCurrencyArray = getCurrencyArray($cur,$currencyName,$date,$obj,$string);
-       
-        $newCurrencyArray = getAPI2($newCurrencyArray,$cur,$date);
-
-        
-  
-        $xml = simplexml_load_file("../rateV1.xml");
-    
-
-        $obj = $xml->xpath("//currency[code='" . $cur . "']");
-
-
-
-
-        //print("<pre>".print_r($obj,true)."</pre>");
-        if (empty($obj)){
-        //echo "Currency does not exist new currency added";
-            
-        addNewCurr($newCurrencyArray,$filename);
-        
-        displayFile($newCurrencyArray);
-
-        
-        }else{
-            //then update it
-            //displayFile($newCurrencyArray);
-            /*
-            $url = "http://data.fixer.io/api/latest?access_key=cbc73bcd8ffa149c344ba19ef687fa31";
-
-            $contents = file_get_contents($url);
-    
-            $ratez=json_decode($contents);
-    
-            $rate = $ratez->rates;
-    
-            $gbp = $rate->GBP;
-    
-            $newRate = array();
-    
-            foreach ($rate as $key=> $item) {
-    
-                if ($cur == $key){
-    
-                    array_push($newRate,$cur,$item / $gbp);
-    
-                }
-    
-            }     
-      
-            
-            printPost($newRate,$date,$cur,$filename);
-            */
-            //postCurrency($cur);
-           
-        //}
         putCurrency ($cur);
     //update a current rate    
     }else if($action == "post") {
-        /*
-        $url = "http://data.fixer.io/api/latest?access_key=cbc73bcd8ffa149c344ba19ef687fa31";
-
-        $contents = file_get_contents($url);
-
-        $ratez=json_decode($contents);
-
-        $rate = $ratez->rates;
-
-        $gbp = $rate->GBP;
-
-        $newRate = array();
-
-        foreach ($rate as $key=> $item) {
-
-            if ($cur == $key){
-
-                array_push($newRate,$cur,$item / $gbp);
-
-            }
-
-        }     
-  
-        printPost($newRate,$date,$cur,$filename);
-*/
+   
         postCurrency($cur);
     }else{
         displayErrorMessage("2000",$defaultFormat);

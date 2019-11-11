@@ -16,7 +16,9 @@ date_default_timezone_set("Europe/London");
 
 $date = time();
 
-$contents = file_get_contents(apiKey);
+$url = "http://data.fixer.io/api/latest?access_key=cbc73bcd8ffa149c344ba19ef687fa31";
+
+$contents = file_get_contents($url);
 
 $ratez=json_decode($contents);
 
@@ -195,18 +197,7 @@ $getTime=$loadNewFile->xpath("/holder/@time");
 
     $test2 = $dom2->saveXML();
     
-    displayFormat2($format, $test2);
-}
-
-
-function readFileRate (){
-
-
-    
-}
-
-function loadRateIfFileDone(){
-
+    displayFormat($format, $test2);
 }
 
 
@@ -262,13 +253,26 @@ function deleteCurrency ($cur,$action){
 
 
 function postCurrency ($cur){
+    
+    $xml = simplexml_load_file("../rateV1.xml");
+
+    $findRate = $xml->xpath("//currency[code='" . $cur . "']/rate");
+
+
+    if ($findRate[0] == false){
+
+        
+        displayErrorMessage("2300",defaultFormat);
+        die();
+    }
+
     date_default_timezone_set("Europe/London");
 
     $date = time();
 
     $url = "http://data.fixer.io/api/latest?access_key=cbc73bcd8ffa149c344ba19ef687fa31";
 
-    $contents = file_get_contents("'".apiKey."'");
+    $contents = file_get_contents($url);
 
     $ratez=json_decode($contents);
 
@@ -291,7 +295,7 @@ function postCurrency ($cur){
     //$newRate,$date,$cur,$filename
     //ratesF
 
-    $xml = simplexml_load_file("../rateV1.xml");
+ 
     
     $obj = $xml->xpath("//currency[code='" . $cur . "']");
     
@@ -301,13 +305,7 @@ function postCurrency ($cur){
         die();
     }
 
-    $findRate = $xml->xpath("//currency[code='" . $cur . "']/rate");
-
-    if (empty($findRate)){
-
-        displayErrorMessage("2300",defaultFormat);
-        die();
-    }
+   
     
     
     $result = $xml->xpath("//currency[code='" . $cur . "']/code/@display");
@@ -420,7 +418,7 @@ function putCurrency ($cur){
     array_push($newCurrencyArray,substr($string, 0, -1));
 
 
-    $contents = file_get_contents("'".apiKey."'");
+    $contents = file_get_contents($url);
 
     $ratez=json_decode($contents);
 
@@ -440,9 +438,9 @@ function putCurrency ($cur){
 
     } 
     
-    addNewCurr2($newCurrencyArray,"../rateV1.xml");
+    addNewCurr($newCurrencyArray,"../rateV1.xml");
     
-    displayFile2($newCurrencyArray);
+    displayFile($newCurrencyArray);
 
     
     }else{
@@ -455,7 +453,7 @@ function putCurrency ($cur){
     
 }
 
-function displayFormat2($format,$test2){
+function displayFormat($format,$test2){
     if ($format == "xml"){
             
 
@@ -475,8 +473,8 @@ function displayFormat2($format,$test2){
     }
 }
 
-function addNewCurr2($newCurrencyArray,$filename){
-    print_r($newCurrencyArray);
+function addNewCurr($newCurrencyArray,$filename){
+    //print_r($newCurrencyArray);
     /// load XML, create XPath object
     $xml2 = new DomDocument();
     $xml2->preserveWhitespace = false;
@@ -518,7 +516,7 @@ function addNewCurr2($newCurrencyArray,$filename){
 
 }
 
-function displayFile2($newCurrencyArray){
+function displayFile($newCurrencyArray){
 
     date_default_timezone_set("Europe/London");
 
@@ -561,4 +559,134 @@ function displayFile2($newCurrencyArray){
     header('Content-Type: text/xml');
     print $doc->saveXML();
 }
+
+function is_decimal( $val )
+{
+    return (!(is_numeric( $val ) || floor( $val ) != $val));
+}
+
+//deal with error messages
+function displayErrorMessage($errCd,$format)
+{
+
+    if (strpos($_SERVER['REQUEST_URI'], "update") !== false){
+
+        $errorCodes=simplexml_load_file("../error.xml");
+    }else{
+
+        $errorCodes=simplexml_load_file("error.xml");
+
+    }
+
+    $err=$errorCodes->xpath("//error[code='".$errCd."']");
+    
+    if (empty($err)){
+
+        $errorCode = "??";
+        $message = "Error Unknown";
+    }else{
+        $errorCode = (string)  $err[0]->code;
+        $message = (string) $err[0]->msg;
+    }
+
+    $doc = new DOMDocument('1.0', "UTF-8");
+
+    $action = $doc->createElement('conv');
+
+    $er = $doc->createElement("error");
+
+    $cd = $doc->createElement("code",$errorCode);
+    $er->appendChild($cd);
+
+    $ms = $doc->createElement("msg",$message);
+    $er->appendChild($ms);
+  
+
+    $action->appendChild($er);
+    $doc->appendChild($action);
+
+    $savedMessage = $doc->saveXML();
+   
+    header('Content-Type:text/'.$format.'');
+
+    if ($format == "xml"){
+        
+        header('Content-Type:text/xml');
+        echo $savedMessage;
+    }
+    else if ($format == "json"){
+        $xml = simplexml_load_string($savedMessage);
+        $json = json_encode($xml);
+        header ("Content-Type: application/json");
+        echo $json;
+    }else{
+        header('Content-Type:text/xml');
+        echo $savedMessage;
+    }
+
+    //print $doc->saveXML();
+
+    //return $doc;
+}
+function loadRateFile($rateFileXml,$to,$from,$amnt){
+
+    $getTime=$rateFileXml->xpath("/holder/@time");
+
+    $gotTime= (string) $getTime[0]->time;
+
+    $toResponse=$rateFileXml->xpath("//currency[code='" . $to . "']");
+
+
+    $codeTo= (string) $toResponse[0]->code;
+    $currTo= (string) $toResponse[0]->currencyName;
+    $locTo= (string) $toResponse[0]->location;
+    $rateTo= (string) $toResponse[0]->rate;
+
+    $fromResponse=$rateFileXml->xpath("//currency[code='" . $from . "']");
+
+
+    $codeFrom= (string) $fromResponse[0]->code;
+    $currFrom= (string) $fromResponse[0]->currencyName;
+    $locFrom= (string) $fromResponse[0]->location;
+    $rateFrom= (string) $fromResponse[0]->rate;
+
+
+
+    $conversion = ($rateTo / $rateFrom);
+
+    $conversion2 = ($rateTo / $rateFrom) * $amnt;
+
+
+    $dom2 = new DOMDocument("1.0");
+
+    $root2 = $dom2->createElement('root');
+
+    $dom2->appendChild($root2);
+
+    $mainNode = $dom2->createElement("conv");
+
+    $mainNode->appendChild($dom2->createElement("at",$gotTime)); 
+    $mainNode->appendChild($dom2->createElement("rate",$conversion));
+
+    $fromElement = $dom2->createElement("from");
+    $fromElement->appendChild($dom2->createElement("code",$codeFrom)); 
+    $fromElement->appendChild($dom2->createElement("curr",$currFrom)); 
+    $fromElement->appendChild($dom2->createElement("loc",$locFrom)); 
+    $fromElement->appendChild($dom2->createElement("amnt",$amnt)); 
+    $mainNode->appendChild($fromElement);
+
+    $toElement = $dom2->createElement("to");
+    $toElement->appendChild($dom2->createElement("code",$codeTo)); 
+    $toElement->appendChild($dom2->createElement("curr",$currTo)); 
+    $toElement->appendChild($dom2->createElement("loc",$locTo)); 
+    $toElement->appendChild($dom2->createElement("amnt",$conversion2)); 
+    $mainNode->appendChild($toElement);
+
+
+    $root2->appendChild($mainNode);
+
+    $test2 = $dom2->saveXML();
+    return $test2;
+}
+
 ?>
