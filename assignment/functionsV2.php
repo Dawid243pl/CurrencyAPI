@@ -16,9 +16,8 @@ date_default_timezone_set("Europe/London");
 
 $date = time();
 
-$url = "http://data.fixer.io/api/latest?access_key=cbc73bcd8ffa149c344ba19ef687fa31";
 
-$contents = file_get_contents($url);
+$contents = file_get_contents(apiKey);
 
 $ratez=json_decode($contents);
 
@@ -270,9 +269,7 @@ function postCurrency ($cur){
 
     $date = time();
 
-    $url = "http://data.fixer.io/api/latest?access_key=cbc73bcd8ffa149c344ba19ef687fa31";
-
-    $contents = file_get_contents($url);
+    $contents = file_get_contents(apiKey);
 
     $ratez=json_decode($contents);
 
@@ -390,8 +387,7 @@ function putCurrency ($cur){
     //print("<pre>".print_r($obj,true)."</pre>");
     if (empty($obj)){
     //echo "Currency does not exist new currency added";
-    $url = "http://data.fixer.io/api/latest?access_key=cbc73bcd8ffa149c344ba19ef687fa31";
-
+    
     $xml = simplexml_load_file("../country.xml");
     
     $obj = $xml->xpath("//CcyNtry[Ccy='" . $cur . "']");
@@ -418,7 +414,7 @@ function putCurrency ($cur){
     array_push($newCurrencyArray,substr($string, 0, -1));
 
 
-    $contents = file_get_contents($url);
+    $contents = file_get_contents(apiKey);
 
     $ratez=json_decode($contents);
 

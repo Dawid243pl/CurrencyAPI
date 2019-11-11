@@ -13,7 +13,7 @@ By Dawid Koleczko 17024154
 */
 
 
-define("apiKey","'http://data.fixer.io/api/latest?access_key=cbc73bcd8ffa149c344ba19ef687fa31'");
+define("apiKey","http://data.fixer.io/api/latest?access_key=cbc73bcd8ffa149c344ba19ef687fa31");
 
 define("countryF","country.xml");
 

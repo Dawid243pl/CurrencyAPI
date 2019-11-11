@@ -28,11 +28,12 @@
 </form>
 <script>
 
-  $(document).ready(function(){
+$(document).ready(function(){
 
 var tempArray =[];
 var counter =0;
 var isBlank = false;
+  //load each uniqe possible currency o choose from
   $.ajax({
 
     type: "GET",
@@ -79,10 +80,11 @@ var isBlank = false;
 
   });
 
+  //set deafult as the first currency
   var selectedAction ="";
   var selectedCurrency ="AFN"
 
- 
+  //when you change the selected value update it
   $('#currency_ops').on('change', function() {
     var url = $(this).val(); // get selected value
     if (url) { // require a URL
@@ -94,16 +96,13 @@ var isBlank = false;
 
   $('#sButton').click(function() {
 
-    
+
     $("#textArea").html(' ');  
     $('input:radio').each(function() {
       if($(this).is(':checked')) {
-        // You have a checked radio button here...
+        
         selectedAction = this.value;
       } 
-      else {
-        // Or an unchecked one here...
-      }
     });
 
     if (selectedAction ==""){
@@ -114,7 +113,7 @@ var isBlank = false;
       $(".circOutline").css("border","0px");
       var savedUrl = 'http://localhost/atwd1/assignment/update/?cur='+ selectedCurrency+'&action='+selectedAction;
   
-
+    //return the result
     $.ajax({
         type: "GET",
         url: savedUrl,
@@ -124,6 +123,12 @@ var isBlank = false;
         complete: function(xmlResponse) {
             
               $("#textArea").text(xmlResponse.responseText);
+              //$('#textArea').val(xmlResponse.responseText);
+              
+
+              //$("#textArea").html('<pre>'+xmlResponse.responseText+'</pre>');
+
+              //$("#preForXMLResponse").html('<pre>'+xmlResponse+'</pre>');
         }
     });
     }

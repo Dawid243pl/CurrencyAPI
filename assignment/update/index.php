@@ -2,7 +2,7 @@
     //include '../functions.php';
     require('../config.php');
     include '../functionsV2.php';
-    //error_reporting(0);
+    error_reporting(0);
 
     
     $defaultFormat = "xml";
