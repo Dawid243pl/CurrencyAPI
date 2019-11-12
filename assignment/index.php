@@ -6,6 +6,8 @@ include 'functionsV2.php';
 error_reporting(0);
 
 
+//decimal?
+
 //check if each GET matches the parameters we want
 foreach ($_GET as $key => $value) {
        
@@ -36,9 +38,15 @@ if ( (($key == "from") && in_array($key, params)) ){
 
 
 //Check if the params we want are actually there otherwise thorw paramter missing
-if ((isset($_GET['from'])) && (isset($_GET['to'])) && (isset($_GET['amnt'])) && (isset($_GET['format']))) {
+if ((isset($_GET['from'])) && (isset($_GET['to'])) && (isset($_GET['amnt'])) ) {
     
-    
+    if (!isset($_GET['format'])) {
+
+        $format = "xml";
+
+    }   
+
+
     $xml_file_name = "rateV1.xml";
     
   
