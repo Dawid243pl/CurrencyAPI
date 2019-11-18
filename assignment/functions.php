@@ -252,7 +252,7 @@ function deleteCurrency ($cur,$action){
 
 
 function postCurrency ($cur){
-    
+
     $xml = simplexml_load_file("../rateV1.xml");
 
     $findRate = $xml->xpath("//currency[code='" . $cur . "']/rate");
@@ -376,8 +376,7 @@ function postCurrency ($cur){
 }
 
 function putCurrency ($cur){
-    
-
+      
     $xml = simplexml_load_file("../rateV1.xml");
 
 
@@ -558,7 +557,9 @@ function displayFile($newCurrencyArray){
 
 function is_decimal( $val )
 {
-    return (!(is_numeric( $val ) || floor( $val ) != $val));
+    return (!(is_numeric( $val ) || floor( $val ) != $val) || preg_match('/\.\d{3,}/', $val) );
+        
+   
 }
 
 //deal with error messages

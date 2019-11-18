@@ -18,7 +18,11 @@
     //echo $action."<br>".$cur;
     //de activate the current rate do not delete ie add an attribute        
 
-   
+    if ($cur == baseRate){
+        displayErrorMessage("2400",defaultFormat);
+        die();
+    } 
+    
     $checkCurrency = simplexml_load_file("../country.xml");
     
     $checkCurr = $checkCurrency->xpath("//CcyNtry[Ccy='" . $cur . "']");
