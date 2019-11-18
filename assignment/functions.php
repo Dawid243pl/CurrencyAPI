@@ -274,6 +274,11 @@ function postCurrency ($cur){
     $ratez=json_decode($contents);
 
     $rate = $ratez->rates;
+    
+    if ($rate === ""){
+        displayErrorMessage("2300",defaultFormat);
+        die();
+    }
 
     $gbp = $rate->GBP;
 
