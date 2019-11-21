@@ -33,12 +33,9 @@ foreach ($rate as $key=> $item) {
 
         if ($startingCurrencies[$i] == $key){
 
-            //echo $key . ' : ';
-            //echo $item / $gbp. '<br>';
-
             $tempCurrency = array();
 
-            array_push($tempCurrency,$key,$item / $gbp);
+            array_push($tempCurrency,$key,number_format(($item / $gbp),2));
             
             array_push($newArray,$tempCurrency);
         
@@ -76,9 +73,15 @@ for ($i =0; $i < sizeof($newArray);$i++){
             {
                 $location= (string) $aviable->CtryNm;
 
-                $string = $string.$location.",";
+             
+                
+                //$string = str_replace ("Iphone","iPhone", $string);
 
-            
+                $string = $string.$location.",";
+               
+                $string = ucwords(ucwords(strtolower($string), ","));
+                $string = str_replace("And","and", $string);
+                $string = str_replace("Of","of", $string);
             }
         }
 
@@ -102,7 +105,7 @@ for ($i =0; $i < sizeof($newArray);$i++){
  $domAttribute = $dom->createAttribute('time');
 
  // Value for the created attribute
- $domAttribute->value = date('d F Y H:i',$date);
+ $domAttribute->value = date('d M Y H:i',$date);
 
  // Don't forget to append it to the element
  $root->appendChild($domAttribute);
@@ -160,11 +163,9 @@ $getTime=$loadNewFile->xpath("/holder/@time");
     $rateFrom= (string) $fromResponse[0]->rate;
 
 
+    $conversion = number_format(($rateTo / $rateFrom),2);
 
-    $conversion = ($rateTo / $rateFrom);
-
-    $conversion2 = ($rateTo / $rateFrom) * $amnt;
-
+    $conversion2 = number_format(($rateTo / $rateFrom) * $amnt,2);
 
     $dom2 = new DOMDocument("1.0");
 
@@ -230,7 +231,7 @@ function deleteCurrency ($cur,$action){
         // Don't forget to append it to the element
         $action->appendChild($domAttribute);
 
-        $at = $doc->createElement("at", date('d F Y H:i',$date));
+        $at = $doc->createElement("at", date('d M Y H:i',$date));
         $action->appendChild($at);
 
         $newRate = $doc->createElement("curr",$cur);
@@ -257,7 +258,7 @@ function postCurrency ($cur){
 
     $findRate = $xml->xpath("//currency[code='" . $cur . "']/rate");
 
-
+   
     if ($findRate[0] == false){
 
         
@@ -288,7 +289,7 @@ function postCurrency ($cur){
 
         if ($cur == $key){
 
-            array_push($newRate,$cur,$item / $gbp);
+            array_push($newRate,$cur,number_format(($item / $gbp),2));
 
         }
 
@@ -324,7 +325,7 @@ function postCurrency ($cur){
     $savedOldRate = (string) $obj[0]->rate;
     
     $obj[0]->rate = $newRate[1];
-    $obj[0]->at = date('d F Y H:i',$date);
+    $obj[0]->at = date('d M Y H:i',$date);
 
     //$rTo= (string) $obj[0]->time;
     $rCode= (string) $obj[0]->code;
@@ -347,7 +348,8 @@ function postCurrency ($cur){
     // Don't forget to append it to the element
     $action->appendChild($domAttribute);
 
-    $at = $doc->createElement("at",date('d F Y H:i',$date));
+    $at = $doc->createElement("at", date('d M Y H:i',$date));
+
     $action->appendChild($at);
 
     $newRate = $doc->createElement("rate",$newRate[1]);
@@ -386,6 +388,13 @@ function putCurrency ($cur){
 
 
     $obj = $xml->xpath("//currency[code='" . $cur . "']");
+
+    if ($obj[0] == false){
+
+        
+        displayErrorMessage("2300",defaultFormat);
+        die();
+    }
 
 
     //print("<pre>".print_r($obj,true)."</pre>");
@@ -432,7 +441,7 @@ function putCurrency ($cur){
 
         if ($cur == $key){
 
-            array_push($newCurrencyArray,$item / $gbp);
+            array_push($newCurrencyArray,number_format(($item / $gbp),2) );
 
         }
 
@@ -534,7 +543,7 @@ function displayFile($newCurrencyArray){
     // Don't forget to append it to the element
     $action->appendChild($domAttribute);
 
-    $at = $doc->createElement("at",date('d F Y H:i',$date));
+    $at = $doc->createElement("at",date('d M Y H:i',$date));
     $action->appendChild($at);
 
     $newRate = $doc->createElement("rate",$newCurrencyArray[3]);
@@ -654,10 +663,11 @@ function loadRateFile($rateFileXml,$to,$from,$amnt){
 
 
 
-    $conversion = ($rateTo / $rateFrom);
+    $conversion = number_format(($rateTo / $rateFrom),2);
 
-    $conversion2 = ($rateTo / $rateFrom) * $amnt;
+    $conversion2 = number_format(($rateTo / $rateFrom) * $amnt,2);
 
+    
 
     $dom2 = new DOMDocument("1.0");
 
