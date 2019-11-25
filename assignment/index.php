@@ -49,7 +49,7 @@ foreach ($_GET as $key => $value) {
     }
     
     }
-    $xml_file_name = "rateV1.xml";
+    $xml_file_name = "rates.xml";
     
   
     date_default_timezone_set("Europe/London");
@@ -58,7 +58,7 @@ foreach ($_GET as $key => $value) {
     
     $countryFileXml = simplexml_load_file("country.xml");
     
-    $rateFileXml = simplexml_load_file("rateV1.xml");
+    $rateFileXml = simplexml_load_file("rates.xml");
     
     $supported_rates = array();
     

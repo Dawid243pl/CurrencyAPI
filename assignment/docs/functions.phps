@@ -35,7 +35,7 @@ foreach ($rate as $key=> $item) {
 
             $tempCurrency = array();
 
-            array_push($tempCurrency,$key,number_format(($item / $gbp),2));
+            array_push($tempCurrency,$key,number_format(($item / $gbp),5));
             
             array_push($newArray,$tempCurrency);
         
@@ -97,7 +97,7 @@ for ($i =0; $i < sizeof($newArray);$i++){
 
 
 
- //create the rateV1File
+ //create the ratesFile
 
  $dom = new DOMDocument("1.0");
 
@@ -209,18 +209,29 @@ $getTime=$loadNewFile->xpath("/holder/@time");
 
 function deleteCurrency ($cur,$action){
 
+    $xml = simplexml_load_file("../rates.xml");
+
+    $findRate = $xml->xpath("//currency[code='" . $cur . "']/rate");
+
+    
+    if (empty($findRate)){
+
+        displayErrorMessage("2200",$defaultFormat);
+        die();
+    }
+    
     date_default_timezone_set("Europe/London");
 
     $date = time();
 
     $dom = new DomDocument();
-    $dom->load('../rateV1.xml');
+    $dom->load('../rates.xml');
     $xp = new DomXPath($dom);
     $res = $xp->query("//currency[code='" . $cur . "']/code");
 
        //print("<pre>".print_r($res->item(0) ,true)."</pre>");
         $res->item(0)->setAttribute('display','none');
-        $dom->save('../rateV1.xml');
+        $dom->save('../rates.xml');
 
 
         $doc = new DOMDocument('1.0', "UTF-8");
@@ -254,18 +265,26 @@ function deleteCurrency ($cur,$action){
 
 function postCurrency ($cur){
 
-    $xml = simplexml_load_file("../rateV1.xml");
+    $xml = simplexml_load_file("../rates.xml");
 
     $findRate = $xml->xpath("//currency[code='" . $cur . "']/rate");
 
-   
+    
+    if (empty($findRate)){
+
+        //echo "Error 2100 Currency code in wrong format or is missing";
+     
+        displayErrorMessage("2200",$defaultFormat);
+        die();
+    }
+/*    
     if ($findRate[0] == false){
 
         
         displayErrorMessage("2300",defaultFormat);
         die();
     }
-
+*/
     date_default_timezone_set("Europe/London");
 
     $date = time();
@@ -289,7 +308,7 @@ function postCurrency ($cur){
 
         if ($cur == $key){
 
-            array_push($newRate,$cur,number_format(($item / $gbp),2));
+            array_push($newRate,$cur,number_format(($item / $gbp),5));
 
         }
 
@@ -324,7 +343,7 @@ function postCurrency ($cur){
     $rRate= (string) $obj[0]->rate;
 
     //echo $xml->asXml();
-    $xml->asXml("../rateV1.xml");
+    $xml->asXml("../rates.xml");
 
     $doc = new DOMDocument('1.0', "UTF-8");
 
@@ -374,18 +393,19 @@ function postCurrency ($cur){
 
 function putCurrency ($cur){
       
-    $xml = simplexml_load_file("../rateV1.xml");
+    $xml = simplexml_load_file("../rates.xml");
 
 
     $obj = $xml->xpath("//currency[code='" . $cur . "']");
-
+   
+    /*
     if ($obj[0] == false){
 
         
         displayErrorMessage("2300",defaultFormat);
         die();
     }
-
+*/
 
     //print("<pre>".print_r($obj,true)."</pre>");
     if (empty($obj)){
@@ -394,6 +414,12 @@ function putCurrency ($cur){
     $xml = simplexml_load_file("../country.xml");
     
     $obj = $xml->xpath("//CcyNtry[Ccy='" . $cur . "']");
+
+    if (empty($obj)){
+
+        displayErrorMessage("2200",$defaultFormat);
+        die();
+    }
 
     $string="";
 
@@ -427,17 +453,27 @@ function putCurrency ($cur){
 
     $newRate = array();
 
+    //var_dump($ratez);
+
+   
+    if ($rate->$cur == ""){
+
+        //error 2300
+        displayErrorMessage("2300",defaultFormat);
+        die();
+    }
+
     foreach ($rate as $key=> $item) {
 
         if ($cur == $key){
 
-            array_push($newCurrencyArray,number_format(($item / $gbp),2) );
+            array_push($newCurrencyArray,number_format(($item / $gbp),5) );
 
         }
 
     } 
     
-    addNewCurr($newCurrencyArray,"../rateV1.xml");
+    addNewCurr($newCurrencyArray,"../rates.xml");
     
     displayFile($newCurrencyArray);
 
@@ -453,6 +489,7 @@ function putCurrency ($cur){
 }
 
 function displayFormat($format,$test2){
+    
     if ($format == "xml"){
             
 
@@ -461,10 +498,19 @@ function displayFormat($format,$test2){
 
     }
     else if ($format == "json"){
-        $xml = simplexml_load_string($test2);
-        $json = json_encode($xml);
-        header ("Content-Type: application/json");
-        echo $json;
+        
+        
+        $xmlFileLoaded = simplexml_load_string($test2); 
+        $root = $xmlFileLoaded->getName();  // grab the root of  xml
+        
+        //json encode the xml
+        $jsonResult = json_encode($xmlFileLoaded,JSON_PRETTY_PRINT);     
+        
+        $finaloutput = json_encode( array($root => json_decode($jsonResult) ),JSON_PRETTY_PRINT );
+        header('Content-Type:text/json');
+        echo $finaloutput;
+     
+        
     }
     else{
         displayErrorMessage("1400",$format);

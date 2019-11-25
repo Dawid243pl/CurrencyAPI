@@ -19,15 +19,15 @@
     date_default_timezone_set("Europe/London");
 
     $date = time();
-    $filename ="../rateV1.xml";
+    $filename ="../rates.xml";
     //echo $action."<br>".$cur;
     //de activate the current rate do not delete ie add an attribute        
    /*
-    $checkCurrency = simplexml_load_file("../rateV1.xml");
+    $checkCurrency = simplexml_load_file("../rates.xml");
     
     $checkCurr = $checkCurrency->xpath("//CcyNtry[Ccy='" . $cur . "']");
 */
-    $xml = simplexml_load_file("../rateV1.xml");
+    $xml = simplexml_load_file("../rates.xml");
 
     $findRate = $xml->xpath("//currency[code='" . $cur . "']/rate");
     

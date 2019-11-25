@@ -20,7 +20,7 @@ define("apiKey","http://data.fixer.io/api/latest?access_key=cbc73bcd8ffa149c344b
 
 define("countryF","country.xml");
 
-define("ratesF","rateV1.xml");
+define("ratesF","rates.xml");
 
 define("defaultFormat","xml");
 

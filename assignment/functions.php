@@ -35,7 +35,7 @@ foreach ($rate as $key=> $item) {
 
             $tempCurrency = array();
 
-            array_push($tempCurrency,$key,number_format(($item / $gbp),2));
+            array_push($tempCurrency,$key,number_format(($item / $gbp),5));
             
             array_push($newArray,$tempCurrency);
         
@@ -97,7 +97,7 @@ for ($i =0; $i < sizeof($newArray);$i++){
 
 
 
- //create the rateV1File
+ //create the ratesFile
 
  $dom = new DOMDocument("1.0");
 
@@ -209,7 +209,7 @@ $getTime=$loadNewFile->xpath("/holder/@time");
 
 function deleteCurrency ($cur,$action){
 
-    $xml = simplexml_load_file("../rateV1.xml");
+    $xml = simplexml_load_file("../rates.xml");
 
     $findRate = $xml->xpath("//currency[code='" . $cur . "']/rate");
 
@@ -225,13 +225,13 @@ function deleteCurrency ($cur,$action){
     $date = time();
 
     $dom = new DomDocument();
-    $dom->load('../rateV1.xml');
+    $dom->load('../rates.xml');
     $xp = new DomXPath($dom);
     $res = $xp->query("//currency[code='" . $cur . "']/code");
 
        //print("<pre>".print_r($res->item(0) ,true)."</pre>");
         $res->item(0)->setAttribute('display','none');
-        $dom->save('../rateV1.xml');
+        $dom->save('../rates.xml');
 
 
         $doc = new DOMDocument('1.0', "UTF-8");
@@ -265,7 +265,7 @@ function deleteCurrency ($cur,$action){
 
 function postCurrency ($cur){
 
-    $xml = simplexml_load_file("../rateV1.xml");
+    $xml = simplexml_load_file("../rates.xml");
 
     $findRate = $xml->xpath("//currency[code='" . $cur . "']/rate");
 
@@ -308,7 +308,7 @@ function postCurrency ($cur){
 
         if ($cur == $key){
 
-            array_push($newRate,$cur,number_format(($item / $gbp),2));
+            array_push($newRate,$cur,number_format(($item / $gbp),5));
 
         }
 
@@ -343,7 +343,7 @@ function postCurrency ($cur){
     $rRate= (string) $obj[0]->rate;
 
     //echo $xml->asXml();
-    $xml->asXml("../rateV1.xml");
+    $xml->asXml("../rates.xml");
 
     $doc = new DOMDocument('1.0', "UTF-8");
 
@@ -393,7 +393,7 @@ function postCurrency ($cur){
 
 function putCurrency ($cur){
       
-    $xml = simplexml_load_file("../rateV1.xml");
+    $xml = simplexml_load_file("../rates.xml");
 
 
     $obj = $xml->xpath("//currency[code='" . $cur . "']");
@@ -467,13 +467,13 @@ function putCurrency ($cur){
 
         if ($cur == $key){
 
-            array_push($newCurrencyArray,number_format(($item / $gbp),2) );
+            array_push($newCurrencyArray,number_format(($item / $gbp),5) );
 
         }
 
     } 
     
-    addNewCurr($newCurrencyArray,"../rateV1.xml");
+    addNewCurr($newCurrencyArray,"../rates.xml");
     
     displayFile($newCurrencyArray);
 
@@ -499,15 +499,17 @@ function displayFormat($format,$test2){
     }
     else if ($format == "json"){
         
-        $xml = simplexml_load_string($test2);
-
-        //var_dump($xml, true);
-        //print("<pre>".print_r($test2,true)."</pre>");
-        $json = json_encode($xml, JSON_UNESCAPED_UNICODE | JSON_PREETTY_PRINT);
         
-        header ("Content-Type: application/json");
-        echo $json;
-
+        $xmlFileLoaded = simplexml_load_string($test2); 
+        $root = $xmlFileLoaded->getName();  // grab the root of  xml
+        
+        //json encode the xml
+        $jsonResult = json_encode($xmlFileLoaded,JSON_PRETTY_PRINT);     
+        
+        $finaloutput = json_encode( array($root => json_decode($jsonResult) ),JSON_PRETTY_PRINT );
+        header('Content-Type:text/json');
+        echo $finaloutput;
+     
         
     }
     else{

@@ -4,7 +4,7 @@
 <body>
 <script src="jquery.min.js"></script>
 
-<form action="index.php" method="GET">
+<form action="../index.php" method="GET">
     <h1>Form interface for POST,PUT,DELETE</h1>
     </hr>
     </br>
@@ -34,7 +34,7 @@ var isBlank = false;
 
     type: "GET",
 
-    url: "../country.xml",
+    url: "../../country.xml",
 
     dataType: "xml",
 
@@ -107,7 +107,7 @@ var isBlank = false;
       $(".circOutline").css("border","1px solid red");
     }else{
       $(".circOutline").css("border","0px");
-      var savedUrl = 'index.php?cur='+ selectedCurrency+'&action='+selectedAction;
+      var savedUrl = 'http://localhost/atwd1/assignment/update/index.php?cur='+ selectedCurrency+'&action='+selectedAction;
   
     //return the result
     $.ajax({
