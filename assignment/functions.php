@@ -216,8 +216,6 @@ function deleteCurrency ($cur,$action){
     
     if (empty($findRate)){
 
-        //echo "Error 2100 Currency code in wrong format or is missing";
-     
         displayErrorMessage("2200",$defaultFormat);
         die();
     }
@@ -399,7 +397,7 @@ function putCurrency ($cur){
 
 
     $obj = $xml->xpath("//currency[code='" . $cur . "']");
-
+   
     /*
     if ($obj[0] == false){
 
@@ -416,6 +414,12 @@ function putCurrency ($cur){
     $xml = simplexml_load_file("../country.xml");
     
     $obj = $xml->xpath("//CcyNtry[Ccy='" . $cur . "']");
+
+    if (empty($obj)){
+
+        displayErrorMessage("2200",$defaultFormat);
+        die();
+    }
 
     $string="";
 
