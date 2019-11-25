@@ -567,7 +567,7 @@ function is_decimal( $val )
 }
 
 //deal with error messages
-function displayErrorMessage($errCd,$format)
+function displayErrorMessage($errCd,$format,$action=null)
 {
 
     if (strpos($_SERVER['REQUEST_URI'], "update") !== false){
@@ -590,23 +590,65 @@ function displayErrorMessage($errCd,$format)
         $message = (string) $err[0]->msg;
     }
 
-    $doc = new DOMDocument('1.0', "UTF-8");
 
-    $action = $doc->createElement('conv');
+    $checkErrorCode = substr($errCd, 0, 1);
 
-    $er = $doc->createElement("error");
+    if ($checkErrorCode == 1){
 
-    $cd = $doc->createElement("code",$errorCode);
-    $er->appendChild($cd);
+        
+        $doc = new DOMDocument('1.0', "UTF-8");
 
-    $ms = $doc->createElement("msg",$message);
-    $er->appendChild($ms);
-  
+        $action = $doc->createElement('conv');
 
-    $action->appendChild($er);
-    $doc->appendChild($action);
+        $er = $doc->createElement("error");
 
-    $savedMessage = $doc->saveXML();
+        $cd = $doc->createElement("code",$errorCode);
+        $er->appendChild($cd);
+
+        $ms = $doc->createElement("msg",$message);
+        $er->appendChild($ms);
+    
+
+        $action->appendChild($er);
+        $doc->appendChild($action);
+
+        $savedMessage = $doc->saveXML();
+
+    }else if ($checkErrorCode == 2){
+        $action = htmlspecialchars($_GET["action"]);
+       
+        $string="";
+
+        $checkAction = $string.$action;
+
+        $doc = new DOMDocument('1.0', "UTF-8");
+
+   
+        $action = $doc->createElement('action');
+
+        $domAttribute = $doc->createAttribute('type');
+
+        // Value for the created attribute
+        $domAttribute->value = $checkAction;
+
+        // Don't forget to append it to the element
+        $action->appendChild($domAttribute);
+
+        $er = $doc->createElement("error");
+
+        $cd = $doc->createElement("code",$errorCode);
+        $er->appendChild($cd);
+
+        $ms = $doc->createElement("msg",$message);
+        $er->appendChild($ms);
+    
+
+        $action->appendChild($er);
+        $doc->appendChild($action);
+
+        $savedMessage = $doc->saveXML();
+    }
+
    
     header('Content-Type:text/'.$format.'');
 

@@ -1,7 +1,7 @@
 <?php
     require('../config.php');
     include '../functions.php';
-    error_reporting(0);
+    //error_reporting(0);
 
     
     $defaultFormat = "xml";
