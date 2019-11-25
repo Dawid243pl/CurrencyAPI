@@ -76,19 +76,22 @@ for ($i =0; $i < sizeof($newArray);$i++){
              
                 
                 //$string = str_replace ("Iphone","iPhone", $string);
-
-                $string = $string.$location.",";
                
+                $string = $string.$location.", ";
+                
+
                 $string = ucwords(ucwords(strtolower($string), ","));
-                $string = str_replace("And","and", $string);
-                $string = str_replace("Of","of", $string);
+                $string = str_replace(" And "," and ", $string);
+                $string = str_replace(" Of "," of ", $string);
+                $string = str_replace(" Da "," da ", $string);
+                $string = str_replace(" The "," the ", $string);
             }
         }
 
 
     }   
     
-    array_push($newArray[$i],substr($string, 0, -1));
+    array_push($newArray[$i],substr($string, 0, -2));
     $string = "";
 }
 
@@ -162,38 +165,41 @@ $getTime=$loadNewFile->xpath("/holder/@time");
     $locFrom= (string) $fromResponse[0]->location;
     $rateFrom= (string) $fromResponse[0]->rate;
 
-
+    
     $conversion = number_format(($rateTo / $rateFrom),2);
 
     $conversion2 = number_format(($rateTo / $rateFrom) * $amnt,2);
 
+    $formatedCalculation = str_replace( ',', '', $conversion2 );
+
     $dom2 = new DOMDocument("1.0");
 
-    $root2 = $dom2->createElement('root');
+    $root2 = $dom2->createElement('conv');
 
     $dom2->appendChild($root2);
 
-    $mainNode = $dom2->createElement("conv");
+    //$mainNode = $dom2->createElement("conv");
 
-    $mainNode->appendChild($dom2->createElement("at",$gotTime)); 
-    $mainNode->appendChild($dom2->createElement("rate",$conversion));
+    $root2->appendChild($dom2->createElement("at",$gotTime)); 
+    $root2->appendChild($dom2->createElement("rate",$conversion));
+    
 
     $fromElement = $dom2->createElement("from");
     $fromElement->appendChild($dom2->createElement("code",$codeFrom)); 
     $fromElement->appendChild($dom2->createElement("curr",$currFrom)); 
     $fromElement->appendChild($dom2->createElement("loc",$locFrom)); 
     $fromElement->appendChild($dom2->createElement("amnt",$amnt)); 
-    $mainNode->appendChild($fromElement);
+    $root2->appendChild($fromElement);
 
     $toElement = $dom2->createElement("to");
     $toElement->appendChild($dom2->createElement("code",$codeTo)); 
     $toElement->appendChild($dom2->createElement("curr",$currTo)); 
     $toElement->appendChild($dom2->createElement("loc",$locTo)); 
-    $toElement->appendChild($dom2->createElement("amnt",$conversion2)); 
-    $mainNode->appendChild($toElement);
+    $toElement->appendChild($dom2->createElement("amnt",$formatedCalculation)); 
+    $root2->appendChild($toElement);
 
 
-    $root2->appendChild($mainNode);
+    //$root2->appendChild($mainNode);
 
     $test2 = $dom2->saveXML();
     
@@ -212,8 +218,6 @@ function deleteCurrency ($cur,$action){
     $xp = new DomXPath($dom);
     $res = $xp->query("//currency[code='" . $cur . "']/code");
 
-    
-    if ($res->length>0){
        //print("<pre>".print_r($res->item(0) ,true)."</pre>");
         $res->item(0)->setAttribute('display','none');
         $dom->save('../rateV1.xml');
@@ -243,10 +247,6 @@ function deleteCurrency ($cur,$action){
         header('Content-Type: text/xml');
         print $doc->saveXML();
     
-    }else{
-        displayErrorMessage("2200",defaultFormat);
-        die();
-    }
 
     
 }
@@ -299,18 +299,8 @@ function postCurrency ($cur){
     //ratesF
 
  
-    
     $obj = $xml->xpath("//currency[code='" . $cur . "']");
-    
-    if (empty($obj)){
-
-        displayErrorMessage("2200",defaultFormat);
-        die();
-    }
-
-   
-    
-    
+     
     $result = $xml->xpath("//currency[code='" . $cur . "']/code/@display");
 
 
@@ -667,38 +657,37 @@ function loadRateFile($rateFileXml,$to,$from,$amnt){
 
     $conversion2 = number_format(($rateTo / $rateFrom) * $amnt,2);
 
-    
+    $formatedCalculation = str_replace( ',', '', $conversion2 );
 
     $dom2 = new DOMDocument("1.0");
 
-    $root2 = $dom2->createElement('root');
+    $root2 = $dom2->createElement('conv');
 
     $dom2->appendChild($root2);
 
-    $mainNode = $dom2->createElement("conv");
 
-    $mainNode->appendChild($dom2->createElement("at",$gotTime)); 
-    $mainNode->appendChild($dom2->createElement("rate",$conversion));
+    $root2->appendChild($dom2->createElement("at",$gotTime)); 
+    $root2->appendChild($dom2->createElement("rate",$conversion));
 
     $fromElement = $dom2->createElement("from");
     $fromElement->appendChild($dom2->createElement("code",$codeFrom)); 
     $fromElement->appendChild($dom2->createElement("curr",$currFrom)); 
     $fromElement->appendChild($dom2->createElement("loc",$locFrom)); 
     $fromElement->appendChild($dom2->createElement("amnt",$amnt)); 
-    $mainNode->appendChild($fromElement);
+    $root2->appendChild($fromElement);
 
     $toElement = $dom2->createElement("to");
     $toElement->appendChild($dom2->createElement("code",$codeTo)); 
     $toElement->appendChild($dom2->createElement("curr",$currTo)); 
     $toElement->appendChild($dom2->createElement("loc",$locTo)); 
-    $toElement->appendChild($dom2->createElement("amnt",$conversion2)); 
-    $mainNode->appendChild($toElement);
+    $toElement->appendChild($dom2->createElement("amnt",$formatedCalculation)); 
+    $root2->appendChild($toElement);
 
-
-    $root2->appendChild($mainNode);
 
     $test2 = $dom2->saveXML();
     return $test2;
 }
+
+
 
 ?>

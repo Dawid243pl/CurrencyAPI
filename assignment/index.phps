@@ -5,38 +5,7 @@ include 'functions.php';
 error_reporting(0);
 
 
-//decimal?
 
-//check if each GET matches the parameters we want
-foreach ($_GET as $key => $value) {
-       
-if ( (($key == "from") && in_array($key, params)) ){
-    $from = htmlspecialchars($_GET["from"]);
-
-   
-}else if ( (($key == "to") && in_array($key, params)) ){
-    $to = htmlspecialchars($_GET["to"]);
-    
-
-}else if ( (($key == "amnt") && in_array($key, params)) ){
-    
-    $amnt = htmlspecialchars($_GET["amnt"]);
-
-
-}else if ( (($key == "format") && in_array($key, params)) ){
-    $format = htmlspecialchars($_GET["format"]);
-    
-//otherwise thorw error that paramter not recognised
-}else {
-
-    $format = $_GET["format"];
-
-    displayErrorMessage("1100", $format);
-        exit();
-
-}
-
-}
 
 
 //Check if the params we want are actually there otherwise thorw paramter missing
@@ -48,7 +17,38 @@ if ((isset($_GET['from'])) && (isset($_GET['to'])) && (isset($_GET['amnt'])) ) {
 
     }   
 
+    //decimal?
 
+//check if each GET matches the parameters we want
+foreach ($_GET as $key => $value) {
+       
+    if ( (($key == "from") && in_array($key, params)) ){
+        $from = htmlspecialchars($_GET["from"]);
+    
+       
+    }else if ( (($key == "to") && in_array($key, params)) ){
+        $to = htmlspecialchars($_GET["to"]);
+        
+    
+    }else if ( (($key == "amnt") && in_array($key, params)) ){
+        
+        $amnt = htmlspecialchars($_GET["amnt"]);
+    
+    
+    }else if ( (($key == "format") && in_array($key, params)) ){
+        $format = htmlspecialchars($_GET["format"]);
+        
+    //otherwise thorw error that paramter not recognised
+    }else {
+    
+        $format = $_GET["format"];
+    
+        displayErrorMessage("1100", $format);
+            exit();
+    
+    }
+    
+    }
     $xml_file_name = "rateV1.xml";
     
   

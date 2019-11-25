@@ -12,6 +12,9 @@ Date: 21/11/2019
 By Dawid Koleczko 17024154
 */
 
+define("jQuery","https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js");
+
+define("baseRate","GBP");
 
 define("apiKey","http://data.fixer.io/api/latest?access_key=cbc73bcd8ffa149c344ba19ef687fa31");
 

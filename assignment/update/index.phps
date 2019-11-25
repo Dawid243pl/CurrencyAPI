@@ -11,26 +11,45 @@
     
     $action = htmlspecialchars($_GET["action"]);
 
+    if ($cur == baseRate){
+        displayErrorMessage("2400",defaultFormat);
+        die();
+    } 
+    
     date_default_timezone_set("Europe/London");
 
     $date = time();
     $filename ="../rateV1.xml";
     //echo $action."<br>".$cur;
     //de activate the current rate do not delete ie add an attribute        
-
    
     $checkCurrency = simplexml_load_file("../country.xml");
     
     $checkCurr = $checkCurrency->xpath("//CcyNtry[Ccy='" . $cur . "']");
 
     
-    if (empty($checkCurr)){
+    if (($cur == null) || (!is_string($cur))  ){
 
         //echo "Error 2100 Currency code in wrong format or is missing";
      
         displayErrorMessage("2100",$defaultFormat);
         die();
     }
+
+
+    if (empty($checkCurr)){
+
+        //echo "Error 2100 Currency code in wrong format or is missing";
+     
+        displayErrorMessage("2200",$defaultFormat);
+        die();
+    }
+
+
+
+
+    //2200 chec if 
+
 
     if ($action == "del"){
 

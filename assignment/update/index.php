@@ -28,13 +28,28 @@
     $checkCurr = $checkCurrency->xpath("//CcyNtry[Ccy='" . $cur . "']");
 
     
-    if (empty($checkCurr)){
+    if (($cur == null) || (!is_string($cur))  ){
 
         //echo "Error 2100 Currency code in wrong format or is missing";
      
         displayErrorMessage("2100",$defaultFormat);
         die();
     }
+
+
+    if (empty($checkCurr)){
+
+        //echo "Error 2100 Currency code in wrong format or is missing";
+     
+        displayErrorMessage("2200",$defaultFormat);
+        die();
+    }
+
+
+
+
+    //2200 chec if 
+
 
     if ($action == "del"){
 
