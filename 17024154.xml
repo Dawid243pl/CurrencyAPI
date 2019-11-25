@@ -132,20 +132,20 @@
         <component id="D" name="Critical Evaluation">
             <eval>
                 <![CDATA[
-                     <h1>What were your learning outcomes in respect to this project? </h1>   
-                     <p>This assignment has changed the way I think about my work by introducing 
-                     the REST model where the resources are defined by URIs. This model which is 
-                     not tied to any programming language and is the currently the most popular in 
-                     industry. Therefore, I have started by designing URLS and starting from them. 
-                     I have also discovered how easy it is to call the services through a URL and send
-                     or receive this data through JSON or XML.  During the period of this assignment I
-                     had the chance to work and practice a lot with the DOM and its nodes. This experience
-                     has given me even more confidence on how to call and define sections within the document
-                     and has made a better programmer overall. With XPATH I was able to successfully traverse 
-                     through the tree of nodes to find exactly the information that was required. Creating 
-                     task B of the assignment I have been able to develop my understanding and knowledge of 
-                     Ajax. All these learning outcomes will be used in my final year project and going beyond 
-                     that in my career.</p>
+                     <h1>This assignment has changed the way I think about my work by introducing the
+                     REST model where the resources are defined by URIs. This model is not tied to any 
+                     programming language giving me the freedom of choice and is the currently the most
+                     widely in industry. This has encouraged me to think in a completely new way and 
+                     I have started by designing URLS as they are core to the system. I have also 
+                     discovered how easy it is to call the services through a URL and send or receive
+                     this data through JSON or XML.  During the period of this assignment I had the chance
+                     to work and practice a lot with the DOM and its nodes. This experience has given me 
+                     even more confidence on how to call and define sections within the document and has
+                     made a better programmer overall. With XPATH I was able to successfully traverse 
+                     through the tree of nodes to find exactly the information that was required. While
+                     creating task B of the assignment I have been able to develop my understanding and
+                     knowledge of Ajax. All these learning outcomes will be used in my final year project
+                     and going beyond that in my career.  </p>
                      <br/>
                      <h1>How might the application you have built be extended and improved? </h1>
                      <p>I think to improve this application I would need to make a nice user interface
@@ -161,15 +161,15 @@
                      <br/>
                      <h1>How could the application and/or its components promote re-use? </h1>
                      <p>The application has been designed and built in such a way that if the project was being
-                     extended by adding new functionality parts of the old system could still be re used to make 
-                     this functionality. The application itself does not stop the user from adding and deleting the
-                     currencies as it re-uses its components already written to add to the current list. All the 
-                     functionality is created in functions which helps in keeping the code tidy and reusable for 
-                     different parts of the program. This makes the whole system easily extendable or adaptable if
-                     needed for new applications.  It is important to note that on the delete the currency is not
-                     deleted as it is just hidden from the user meaning this currency can be re used later one without 
-                     imputing it again. The application has also been built in such a way that it has a backup of data is
-                     always there in case we need to go back to it. </p>
+                     extended by adding new functionality parts of the old system could still be re used to 
+                     make new components of the system. The application itself does not stop the user from adding
+                     and deleting the currencies as it re-uses its components already written to add to the current
+                     list. All the functionality is created in functions which helps in keeping the code tidy and 
+                     reusable for different parts of the program. This makes the whole system easily extendable or
+                     adaptable if needed for new applications.  It is important to note that on the delete the
+                     currency is not deleted as it is just hidden from the user meaning this currency can be re used
+                     later one without imputing it again. The application has also been built in such a way that it
+                     has a backup of data is always there in case we need to go back to it. </p>
                 ]]>
             </eval>
         </component>
