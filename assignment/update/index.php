@@ -1,7 +1,7 @@
 <?php
     require('../config.php');
     include '../functions.php';
-    //error_reporting(0);
+    error_reporting(0);
 
     
     $defaultFormat = "xml";
@@ -22,11 +22,14 @@
     $filename ="../rateV1.xml";
     //echo $action."<br>".$cur;
     //de activate the current rate do not delete ie add an attribute        
-   
-    $checkCurrency = simplexml_load_file("../country.xml");
+   /*
+    $checkCurrency = simplexml_load_file("../rateV1.xml");
     
     $checkCurr = $checkCurrency->xpath("//CcyNtry[Ccy='" . $cur . "']");
+*/
+    $xml = simplexml_load_file("../rateV1.xml");
 
+    $findRate = $xml->xpath("//currency[code='" . $cur . "']/rate");
     
     if (($cur == null) || (!is_string($cur))  ){
 
@@ -36,15 +39,15 @@
         die();
     }
 
-
-    if (empty($checkCurr)){
+    /*
+    if (empty($findRate)){
 
         //echo "Error 2100 Currency code in wrong format or is missing";
      
         displayErrorMessage("2200",$defaultFormat);
         die();
     }
-
+*/
 
 
 

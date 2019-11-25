@@ -209,6 +209,19 @@ $getTime=$loadNewFile->xpath("/holder/@time");
 
 function deleteCurrency ($cur,$action){
 
+    $xml = simplexml_load_file("../rateV1.xml");
+
+    $findRate = $xml->xpath("//currency[code='" . $cur . "']/rate");
+
+    
+    if (empty($findRate)){
+
+        //echo "Error 2100 Currency code in wrong format or is missing";
+     
+        displayErrorMessage("2200",$defaultFormat);
+        die();
+    }
+    
     date_default_timezone_set("Europe/London");
 
     $date = time();
@@ -258,14 +271,22 @@ function postCurrency ($cur){
 
     $findRate = $xml->xpath("//currency[code='" . $cur . "']/rate");
 
-   
+    
+    if (empty($findRate)){
+
+        //echo "Error 2100 Currency code in wrong format or is missing";
+     
+        displayErrorMessage("2200",$defaultFormat);
+        die();
+    }
+/*    
     if ($findRate[0] == false){
 
         
         displayErrorMessage("2300",defaultFormat);
         die();
     }
-
+*/
     date_default_timezone_set("Europe/London");
 
     $date = time();
@@ -379,13 +400,14 @@ function putCurrency ($cur){
 
     $obj = $xml->xpath("//currency[code='" . $cur . "']");
 
+    /*
     if ($obj[0] == false){
 
         
         displayErrorMessage("2300",defaultFormat);
         die();
     }
-
+*/
 
     //print("<pre>".print_r($obj,true)."</pre>");
     if (empty($obj)){
@@ -427,6 +449,16 @@ function putCurrency ($cur){
 
     $newRate = array();
 
+    //var_dump($ratez);
+
+   
+    if ($rate->$cur == ""){
+
+        //error 2300
+        displayErrorMessage("2300",defaultFormat);
+        die();
+    }
+
     foreach ($rate as $key=> $item) {
 
         if ($cur == $key){
@@ -453,6 +485,7 @@ function putCurrency ($cur){
 }
 
 function displayFormat($format,$test2){
+    
     if ($format == "xml"){
             
 
@@ -461,10 +494,17 @@ function displayFormat($format,$test2){
 
     }
     else if ($format == "json"){
+        
         $xml = simplexml_load_string($test2);
-        $json = json_encode($xml);
+
+        //var_dump($xml, true);
+        //print("<pre>".print_r($test2,true)."</pre>");
+        $json = json_encode($xml, JSON_UNESCAPED_UNICODE | JSON_PREETTY_PRINT);
+        
         header ("Content-Type: application/json");
         echo $json;
+
+        
     }
     else{
         displayErrorMessage("1400",$format);
