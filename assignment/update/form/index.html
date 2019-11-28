@@ -107,8 +107,8 @@ var isBlank = false;
       $(".circOutline").css("border","1px solid red");
     }else{
       $(".circOutline").css("border","0px");
-      var savedUrl = 'http://localhost/atwd1/assignment/update/index.php?cur='+ selectedCurrency+'&action='+selectedAction;
-  
+      var savedUrl = '../index.php?cur='+ selectedCurrency+'&action='+selectedAction;
+      console.log(savedUrl);
     //return the result
     $.ajax({
         type: "GET",
@@ -129,6 +129,8 @@ var isBlank = false;
 
 
 });
+
+
 </script>
 </body>
 </html>

@@ -56,9 +56,6 @@
             <data>
                 <rates_file>http://isa.cems.uwe.ac.uk/~d2-koleczko/atwd1/assignment/data/rates.xml</rates_file>
             </data>
-            <data>
-                <rates_file>http://isa.cems.uwe.ac.uk/~d2-koleczko/atwd1/assignment/data/error.xml</rates_file>
-            </data>
             <code>
                 <file type="main"
                     >http://isa.cems.uwe.ac.uk/~d2-koleczko/atwd1/assignment/docs/index.phps</file>
@@ -67,6 +64,8 @@
                     >http://isa.cems.uwe.ac.uk/~d2-koleczko/atwd1/assignment/docs/config.phps</file>
                 <file type="functions"
                     >http://isa.cems.uwe.ac.uk/~d2-koleczko/atwd1/assignment/docs/functions.phps</file>
+                <file type="error"
+                    >http://isa.cems.uwe.ac.uk/~d2-koleczko/atwd1/assignment/data/error.xml</file>
             </code>
             <comment>Very good undrestanding of component A</comment>
         </component>
