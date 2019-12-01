@@ -4,21 +4,6 @@ require('config.php');
 include 'functions.php';
 error_reporting(0);
 
-
-
-
-
-//Check if the params we want are actually there otherwise thorw paramter missing
-if ((isset($_GET['from'])) && (isset($_GET['to'])) && (isset($_GET['amnt'])) ) {
-    
-    if (!isset($_GET['format'])) {
-
-        $format = "xml";
-
-    }   
-
-    //decimal?
-
 //check if each GET matches the parameters we want
 foreach ($_GET as $key => $value) {
        
@@ -49,6 +34,21 @@ foreach ($_GET as $key => $value) {
     }
     
     }
+
+
+
+//Check if the params we want are actually there otherwise thorw paramter missing
+if ((isset($_GET['from'])) && (isset($_GET['to'])) && (isset($_GET['amnt'])) ) {
+    
+    if (!isset($_GET['format'])) {
+
+        $format = "xml";
+
+    }   
+
+    //decimal?
+
+
     $xml_file_name = "rates.xml";
     
   
