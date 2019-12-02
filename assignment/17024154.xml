@@ -133,7 +133,8 @@
         <component id="D" name="Critical Evaluation">
             <eval>
                 <![CDATA[
-                     <h1>This assignment has changed the way I think about my work by introducing the
+                     <h1>What were your learning outcomes in respect to this project? </h1>
+                     This assignment has changed the way I think about my work by introducing the
                      REST model where the resources are defined by URIs. This model is not tied to any 
                      programming language giving me the freedom of choice and is the currently the most
                      widely in industry. This has encouraged me to think in a completely new way and 
