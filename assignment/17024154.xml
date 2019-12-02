@@ -66,8 +66,10 @@
                     >http://isa.cems.uwe.ac.uk/~d2-koleczko/atwd1/assignment/docs/functions.phps</file>
                 <file type="error"
                     >http://isa.cems.uwe.ac.uk/~d2-koleczko/atwd1/assignment/data/error.xml</file>
+                <file type="country"
+                    >http://isa.cems.uwe.ac.uk/~d2-koleczko/atwd1/assignment/data/country.xml</file>
             </code>
-            <comment>Very good undrestanding of component A</comment>
+            <comment>Very good undrestanding of component A I think it is well designed</comment>
         </component>
 
         <component id="B" name="Post, Put &amp; Delete implementation">
@@ -120,12 +122,12 @@
                     >http://isa.cems.uwe.ac.uk/~d2-koleczko/atwd1/assignment/docs/update/index.phps</file>
                 <!-- You can add more file elements here -->
             </code>
-            <comment>Very good understanding of component B</comment>
+            <comment>Very good understanding of component B I think it is well designed</comment>
         </component>
 
         <component id="C" name="Form Interface">
             <form>http://isa.cems.uwe.ac.uk/~d2-koleczko/atwd1/assignment/update/form/</form>
-            <comment>A nice user interface form</comment>
+            <comment>A nice user interface form with the abillity to dynamically call back data</comment>
         </component>
 
         <component id="D" name="Critical Evaluation">

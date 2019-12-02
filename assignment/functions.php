@@ -1,9 +1,8 @@
 <?php
 
-
+//function to call the API and make a brand new file
 function makeFile ($startingCurrencies,$format,$to,$from,$amnt){
-
-//get The API    
+ 
 $newArray =array();    
 
 $xml_file_name = ratesF;
@@ -72,14 +71,11 @@ for ($i =0; $i < sizeof($newArray);$i++){
             if (!isset($newArray[$i][3]) )
             {
                 $location= (string) $aviable->CtryNm;
-
-             
-                
-                //$string = str_replace ("Iphone","iPhone", $string);
+ 
                
                 $string = $string.$location.", ";
                 
-
+                //make sure these words are lowercase
                 $string = ucwords(ucwords(strtolower($string), ","));
                 $string = str_replace(" And "," and ", $string);
                 $string = str_replace(" Of "," of ", $string);
@@ -128,7 +124,7 @@ for ($i =0; $i < sizeof($newArray);$i++){
 
 }
 
-//save as rates v1
+//save as rates
 $test = $dom->saveXML();
 //if there is a rates file already rename it and create a new rateV!
 if (file_exists($xml_file_name)) {
@@ -206,7 +202,7 @@ $getTime=$loadNewFile->xpath("/holder/@time");
     displayFormat($format, $test2);
 }
 
-
+//delte a currency
 function deleteCurrency ($cur,$action){
 
     $xml = simplexml_load_file("../rates.xml");
@@ -262,7 +258,7 @@ function deleteCurrency ($cur,$action){
     
 }
 
-
+//post currency
 function postCurrency ($cur){
 
     $xml = simplexml_load_file("../rates.xml");
@@ -272,8 +268,7 @@ function postCurrency ($cur){
     
     if (empty($findRate)){
 
-        //echo "Error 2100 Currency code in wrong format or is missing";
-     
+        
         displayErrorMessage("2200",$defaultFormat);
         die();
     }
@@ -390,7 +385,7 @@ function postCurrency ($cur){
 
     
 }
-
+//put currency
 function putCurrency ($cur){
       
     $xml = simplexml_load_file("../rates.xml");
@@ -458,7 +453,6 @@ function putCurrency ($cur){
    
     if ($rate->$cur == ""){
 
-        //error 2300
         displayErrorMessage("2300",defaultFormat);
         die();
     }
@@ -517,7 +511,7 @@ function displayFormat($format,$test2){
         exit();
     }
 }
-
+//add new currecny 
 function addNewCurr($newCurrencyArray,$filename){
     //print_r($newCurrencyArray);
     /// load XML, create XPath object
@@ -560,7 +554,7 @@ function addNewCurr($newCurrencyArray,$filename){
 
 
 }
-
+//displaying file
 function displayFile($newCurrencyArray){
 
     date_default_timezone_set("Europe/London");
@@ -604,7 +598,7 @@ function displayFile($newCurrencyArray){
     header('Content-Type: text/xml');
     print $doc->saveXML();
 }
-
+//check if decimal
 function is_decimal( $val )
 {
     return (!(is_numeric( $val ) || floor( $val ) != $val) || preg_match('/\.\d{3,}/', $val) );
@@ -639,6 +633,7 @@ function displayErrorMessage($errCd,$format,$action=null)
 
     $checkErrorCode = substr($errCd, 0, 1);
 
+    //check if error code starts with 1
     if ($checkErrorCode == 1){
 
         
@@ -660,6 +655,7 @@ function displayErrorMessage($errCd,$format,$action=null)
 
         $savedMessage = $doc->saveXML();
 
+     //check if error code starts with 2    
     }else if ($checkErrorCode == 2){
         $action = htmlspecialchars($_GET["action"]);
        
@@ -677,7 +673,7 @@ function displayErrorMessage($errCd,$format,$action=null)
         // Value for the created attribute
         $domAttribute->value = $checkAction;
 
-        // Don't forget to append it to the element
+        // append it to the element
         $action->appendChild($domAttribute);
 
         $er = $doc->createElement("error");
@@ -717,6 +713,8 @@ function displayErrorMessage($errCd,$format,$action=null)
 
     //return $doc;
 }
+
+//load rate file
 function loadRateFile($rateFileXml,$to,$from,$amnt){
 
     $getTime=$rateFileXml->xpath("/holder/@time");
